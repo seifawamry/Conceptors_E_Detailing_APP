@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production Build Output
+dist/
+dist-ssr/
+*.local
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+
+# Logs & debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+chrome_temp/
+
+# Slide processing source caches (187 WebP slides are tracked in public/slides)
+raw_slides/
+bard-presentation/
+bluecap-presentation/
+presentation-slides/
+ringbio-presentation/
+virulys-presentation/
+
+# Unrelated scratch project archives
+animal-health-sales-dashboard/
+conceptors-rep-crm/
+egy_nutri_sales_review/
+field-visit-evaluation/
+infant_formula_dashboard/
+liptis-brussels-ghent/
+liptis-inventory/
+liptis-neoped-lbw/
+LN_Dashboard_Executive/
+*.zip
+calculate.js
+calc_summary.json
+product_ranks.js
+product_ranks.json
+quadrant_check.js
+test_charts.js
+verify_app.js
