@@ -12,7 +12,10 @@ export default function QuickJumpMatrix({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-150">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-150"
+      onClick={onClose}
+    >
       <div 
         className="relative w-full max-w-5xl bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}

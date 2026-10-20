@@ -571,6 +571,7 @@ export default function App() {
         topTierProducts={topTierProducts}
         onSelectProduct={(p) => {
           setActivePresentationProduct(p);
+          setIsQuickJumpOpen(false);
         }}
         activeProductId={activePresentationProduct?.id}
       />
