@@ -7,31 +7,34 @@ export default {
   theme: {
     extend: {
       colors: {
-        obsidian: {
-          950: '#060911',
-          900: '#090D16',
-          850: '#0D1322',
-          800: '#131C31',
-          700: '#1D2A47',
+        brand: {
+          green: '#0B431E',
+          'green-dark': '#072C14',
+          'green-light': '#14632E',
+          'green-soft': '#E8F4EC',
+          'green-50': '#F0FDF4',
+          gold: '#96916E',
+          'gold-light': '#B3AD85',
+          'gold-soft': '#F7F5EE',
+          'gold-50': '#FCFBF8',
+          offwhite: '#F5F4F0',
+          cream: '#FAF9F5',
+          surface: '#FFFFFF',
         },
-        catalysis: '#10B981',
-        bard: '#F59E0B',
-        vitasignia: '#3B82F6',
-        ringbio: '#EC4899',
+        catalysis: '#0B431E',
+        bard: '#B45309',
+        vitasignia: '#1D4ED8',
+        ringbio: '#BE185D',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
-        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.4)',
-        'glow-amber': '0 0 25px -5px rgba(245, 158, 11, 0.4)',
-        'glow-blue': '0 0 25px -5px rgba(59, 130, 246, 0.4)',
-        'glow-magenta': '0 0 25px -5px rgba(236, 72, 153, 0.4)',
-        'glow-gold': '0 0 20px 2px rgba(234, 179, 8, 0.35)',
+        'brand': '0 4px 20px -2px rgba(11, 67, 30, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+        'brand-hover': '0 12px 30px -4px rgba(11, 67, 30, 0.16), 0 4px 12px -2px rgba(0, 0, 0, 0.06)',
+        'brand-gold': '0 4px 20px -2px rgba(150, 145, 110, 0.25)',
+        'card-elevated': '0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04)',
       },
-      backdropBlur: {
-        xs: '2px',
-      }
     },
   },
   plugins: [],

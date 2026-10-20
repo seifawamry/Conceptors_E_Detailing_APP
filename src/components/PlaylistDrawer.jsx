@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Play, Trash2, Star, Sparkles, GripVertical, Check, ArrowRight } from 'lucide-react';
+import { X, Play, Trash2, Star, GripVertical, Check, ArrowRight, ListPlus } from 'lucide-react';
 
 export default function PlaylistDrawer({
   isOpen,
@@ -13,23 +13,23 @@ export default function PlaylistDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-md animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-150">
       <div 
-        className="w-full max-w-md h-full glass-modal p-6 shadow-2xl border-l border-white/15 flex flex-col justify-between"
+        className="w-full max-w-md h-full bg-white p-6 shadow-2xl border-l border-slate-200 flex flex-col justify-between"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drawer Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              Call Playlist <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">{playlist.length} Products</span>
+            <h3 className="text-lg font-extrabold text-[#0B431E] flex items-center gap-2">
+              Call Playlist <span className="text-xs bg-[#E8F4EC] text-[#0B431E] px-2.5 py-0.5 rounded-full border border-[#0B431E]/20">{playlist.length} Products</span>
             </h3>
-            <p className="text-xs text-slate-400">Custom queue for your veterinary consultation</p>
+            <p className="text-xs text-slate-500 font-medium">Custom queue for your veterinary consultation</p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -40,63 +40,56 @@ export default function PlaylistDrawer({
           {/* Quick-Action: 1-Tap Load 10 Top-Tier Products */}
           <button
             onClick={onLoadTopTier}
-            className="w-full p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border border-amber-400/40 hover:border-amber-300 text-left transition-all flex items-center justify-between group shadow-glow-gold/20"
+            className="w-full p-3.5 rounded-2xl bg-[#F5F4F0] border border-[#96916E]/30 hover:border-[#0B431E]/40 text-left transition-all flex items-center justify-between group shadow-sm active:scale-[0.98]"
           >
             <div className="flex items-center gap-2.5">
-              <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+              <Star className="w-5 h-5 fill-[#96916E] text-[#96916E]" />
               <div>
-                <div className="text-xs font-bold text-white group-hover:text-amber-300">
+                <div className="text-xs font-black text-[#0B431E] group-hover:text-[#14632E]">
                   ⭐ 1-Tap Load Top-Tier Call (10 Products)
                 </div>
-                <div className="text-[11px] text-slate-400">
+                <div className="text-[11px] text-slate-500 font-medium">
                   Queue all flagship products instantly
                 </div>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-[#0B431E] group-hover:translate-x-1 transition-transform" />
           </button>
 
           {/* Playlist Items */}
           {playlist.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 text-xs border border-dashed border-white/10 rounded-2xl mt-6">
-              Your call queue is empty. Click the <strong>+</strong> button on any product card or tap <strong>Load Top-Tier Call</strong> above.
+            <div className="py-16 text-center text-slate-400">
+              <ListPlus className="w-12 h-12 mx-auto mb-3 opacity-30 text-[#0B431E]" />
+              <p className="text-sm font-bold text-slate-600">Your playlist is empty</p>
+              <p className="text-xs text-slate-400 mt-1">Tap the "+" icon on any product card or load the 10 Top-Tier call above.</p>
             </div>
           ) : (
-            playlist.map((product, idx) => (
+            playlist.map((item, index) => (
               <div
-                key={product.id}
-                className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-3 group hover:border-emerald-400/30 transition-all"
+                key={item.id}
+                className="p-3 rounded-2xl bg-[#FAF9F5] border border-slate-200 flex items-center justify-between group hover:border-[#0B431E]/30 transition-all shadow-sm"
               >
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs text-slate-500 font-bold w-4">
-                    {idx + 1}
+                  <span className="w-6 h-6 rounded-full bg-[#E8F4EC] text-[#0B431E] text-xs font-black flex items-center justify-center font-mono">
+                    {index + 1}
                   </span>
-                  {product.slides && product.slides[0] && (
-                    <img
-                      src={product.slides[0]}
-                      alt={product.name}
-                      className="w-12 aspect-video object-cover rounded border border-white/10"
-                    />
-                  )}
                   <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-white line-clamp-1">
-                        {product.name}
-                      </span>
-                      {product.isTopTier && (
-                        <Star className="w-3 h-3 text-amber-400 fill-amber-400 flex-shrink-0" />
+                    <div className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                      <span>{item.name}</span>
+                      {item.isTopTier && (
+                        <Star className="w-3 h-3 fill-[#96916E] text-[#96916E]" />
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-400 font-medium">
-                      {product.company} • {product.slides.length} slides
-                    </span>
+                    <div className="text-[10.5px] text-slate-500 font-medium">
+                      {item.company} • {item.slides?.length || 0} slides
+                    </div>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => onRemoveFromPlaylist(product.id)}
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                  title="Remove from Playlist"
+                  onClick={() => onRemoveFromPlaylist(item.id)}
+                  title="Remove from playlist"
+                  className="p-2 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -105,37 +98,32 @@ export default function PlaylistDrawer({
           )}
         </div>
 
-        {/* Drawer Footer Actions */}
-        <div className="pt-4 border-t border-white/10 space-y-2">
+        {/* Drawer Footer */}
+        <div className="pt-4 border-t border-slate-100 flex flex-col gap-2.5">
+          <button
+            onClick={() => {
+              onStartPlaylist();
+              onClose();
+            }}
+            disabled={playlist.length === 0}
+            className={`w-full py-3.5 px-4 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition-all shadow-sm ${
+              playlist.length > 0
+                ? 'bg-[#0B431E] hover:bg-[#14632E] text-white active:scale-[0.98]'
+                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            <Play className="w-4 h-4 fill-current text-white" />
+            <span>Launch Playlist Call ({playlist.length} Products)</span>
+          </button>
+
           {playlist.length > 0 && (
             <button
-              onClick={() => {
-                onStartPlaylist();
-                onClose();
-              }}
-              className="w-full py-3 px-4 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all shadow-glow-emerald flex items-center justify-center gap-2 active:scale-[0.98]"
-            >
-              <Play className="w-4 h-4 fill-current" />
-              <span>Start Call Presentation ({playlist.length} Products)</span>
-            </button>
-          )}
-
-          <div className="flex items-center justify-between pt-1">
-            <button
               onClick={onClearPlaylist}
-              disabled={playlist.length === 0}
-              className="text-xs text-slate-400 hover:text-rose-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="text-xs font-bold text-slate-500 hover:text-rose-600 py-1.5 transition-colors"
             >
               Clear Entire Playlist
             </button>
-
-            <button
-              onClick={onClose}
-              className="text-xs text-slate-400 hover:text-white transition-colors"
-            >
-              Close Drawer
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

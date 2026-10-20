@@ -10,15 +10,12 @@ import PlaylistDrawer from './components/PlaylistDrawer.jsx';
 import { 
   Star, 
   Search, 
-  Filter, 
   Sparkles, 
-  Play, 
   Zap, 
   Layers, 
-  ListPlus, 
-  CheckCircle2, 
   Building2,
-  Stethoscope
+  Stethoscope,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function App() {
@@ -63,7 +60,7 @@ export default function App() {
   }, [allProducts]);
 
   // State
-  // Default active tab: "top-tier" (⭐ Top 10 Core Focus) as requested!
+  // Default active tab: "top-tier" (⭐ Top 10 Core Focus)
   const [activeTab, setActiveTab] = useState('top-tier');
   const [selectedSpecialty, setSelectedSpecialty] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -214,7 +211,7 @@ export default function App() {
   }, [allProducts, activeTab, selectedSpecialty, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col justify-between selection:bg-emerald-500 selection:text-white pb-20">
+    <div className="min-h-screen bg-[#FAF9F5] text-slate-900 flex flex-col justify-between selection:bg-[#0B431E] selection:text-white pb-24">
       
       {/* 1. APP HEADER */}
       <Header
@@ -227,43 +224,43 @@ export default function App() {
       {/* 2. MAIN DASHBOARD CONTENT */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
         
-        {/* HERO BANNER & 1-TAP CALL BUILDER */}
-        <div className="relative rounded-3xl p-6 sm:p-8 glass-panel mb-8 overflow-hidden border border-white/10 shadow-2xl bg-gradient-to-r from-emerald-950/40 via-[#0D1322] to-amber-950/20">
+        {/* HERO BANNER & 1-TAP CALL BUILDER (Vet-Concept Clinical Aesthetic) */}
+        <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-white via-[#FAF9F5] to-[#E8F4EC] mb-8 overflow-hidden border border-slate-200/90 shadow-sm">
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-extrabold uppercase tracking-wider mb-3">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Veterinary Omni-Detailing System</span>
             </div>
             
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-4xl font-black text-[#0B431E] tracking-tight leading-tight">
               Evidence-Based Veterinary Care & Rapid Diagnostics
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
-              16 clinical products across 4 principal portfolios. Equipped with cinema showroom detailing, laser pointers, and 100% offline clinic caching.
+            <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl font-medium">
+              16 clinical products across 4 principal partner portfolios. Equipped with clinic light presentation mode, interactive laser pointer, and 100% offline clinic caching.
             </p>
 
             {/* 1-Tap Call Actions */}
-            <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <button
                 onClick={loadTopTierCall}
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-950 bg-amber-400 hover:bg-amber-300 transition-all shadow-glow-gold active:scale-[0.98]"
+                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-[#0B431E] hover:bg-[#14632E] transition-all shadow-sm active:scale-[0.98]"
               >
-                <Star className="w-4 h-4 fill-current" />
+                <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
                 <span>⭐ 1-Tap Load Top-Tier Call (10 Products)</span>
               </button>
 
               <button
                 onClick={() => setIsQuickJumpOpen(true)}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all"
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-[#0B431E] bg-white hover:bg-slate-50 border border-slate-200 hover:border-[#0B431E]/40 transition-all shadow-sm"
               >
-                <Zap className="w-4 h-4 text-emerald-400" />
+                <Zap className="w-4 h-4 text-[#0B431E]" />
                 <span>Open 1.5s Omni-Matrix</span>
               </button>
             </div>
           </div>
 
           {/* Background Decorative Rings */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-emerald-500/10 to-transparent blur-3xl pointer-events-none" />
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[#0B431E]/5 to-transparent blur-2xl pointer-events-none" />
         </div>
 
         {/* 3. 1-TAP PRE-BUILT CLINICAL CALL FLOWS */}
@@ -281,23 +278,23 @@ export default function App() {
             {/* ⭐ Top-Tier Focus (10) Default Active Tab */}
             <button
               onClick={() => setActiveTab('top-tier')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all duration-200 border ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all duration-200 border shadow-sm ${
                 activeTab === 'top-tier'
-                  ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-glow-gold scale-[1.02]'
-                  : 'bg-white/5 hover:bg-white/10 text-amber-300/90 border-amber-500/30 hover:border-amber-400'
+                  ? 'bg-[#0B431E] text-white border-[#0B431E] scale-[1.02]'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-[#96916E]'
               }`}
             >
-              <Star className={`w-3.5 h-3.5 ${activeTab === 'top-tier' ? 'fill-current text-slate-950' : 'fill-current text-amber-400'}`} />
+              <Star className={`w-3.5 h-3.5 ${activeTab === 'top-tier' ? 'fill-amber-300 text-amber-300' : 'fill-[#96916E] text-[#96916E]'}`} />
               <span>⭐ Top-Tier Focus (10)</span>
             </button>
 
             {/* All Portfolio (16) */}
             <button
               onClick={() => setActiveTab('all')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
                 activeTab === 'all'
-                  ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-glow-emerald'
-                  : 'bg-white/5 hover:bg-white/10 text-slate-300 border-white/10 hover:border-white/20'
+                  ? 'bg-[#0B431E] text-white border-[#0B431E]'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -307,52 +304,52 @@ export default function App() {
             {/* Catalysis */}
             <button
               onClick={() => setActiveTab('catalysis')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
                 activeTab === 'catalysis'
-                  ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-glow-emerald'
-                  : 'bg-white/5 hover:bg-white/10 text-slate-300 border-white/10'
+                  ? 'bg-[#0B431E] text-white border-[#0B431E]'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span className="w-2 h-2 rounded-full bg-[#0B431E]"></span>
               <span>Catalysis (6)</span>
             </button>
 
             {/* B.A.R.D */}
             <button
               onClick={() => setActiveTab('bard')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
                 activeTab === 'bard'
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-glow-amber'
-                  : 'bg-white/5 hover:bg-white/10 text-slate-300 border-white/10'
+                  ? 'bg-[#B45309] text-white border-[#B45309]'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
               <span>B.A.R.D (5)</span>
             </button>
 
             {/* Vitasignia */}
             <button
               onClick={() => setActiveTab('vitasignia')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
                 activeTab === 'vitasignia'
-                  ? 'bg-blue-500 text-white border-blue-400 shadow-glow-blue'
-                  : 'bg-white/5 hover:bg-white/10 text-slate-300 border-white/10'
+                  ? 'bg-[#1D4ED8] text-white border-[#1D4ED8]'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+              <span className="w-2 h-2 rounded-full bg-[#3B82F6]"></span>
               <span>Vitasignia (1)</span>
             </button>
 
             {/* Ringbio */}
             <button
               onClick={() => setActiveTab('ringbio')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
                 activeTab === 'ringbio'
-                  ? 'bg-pink-500 text-white border-pink-400 shadow-glow-magenta'
-                  : 'bg-white/5 hover:bg-white/10 text-slate-300 border-white/10'
+                  ? 'bg-[#BE185D] text-white border-[#BE185D]'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-pink-400"></span>
+              <span className="w-2 h-2 rounded-full bg-[#EC4899]"></span>
               <span>Ringbio (4)</span>
             </button>
           </div>
@@ -366,13 +363,13 @@ export default function App() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products, clinical indications, ingredients (e.g. 'parvo', 'arginine', 'stones')..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400 transition-colors"
+                placeholder="Search products, indications, ingredients (e.g. 'parvo', 'arginine', 'stones')..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0B431E] focus:ring-1 focus:ring-[#0B431E] transition-colors shadow-sm"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600"
                 >
                   Clear
                 </button>
@@ -383,10 +380,10 @@ export default function App() {
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
               <button
                 onClick={() => setSelectedSpecialty('ALL')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all shadow-sm ${
                   selectedSpecialty === 'ALL'
-                    ? 'bg-white/20 text-white'
-                    : 'bg-white/5 text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#0B431E] text-white'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300'
                 }`}
               >
                 All Specialties
@@ -395,10 +392,10 @@ export default function App() {
                 <button
                   key={spec}
                   onClick={() => setSelectedSpecialty(spec)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all shadow-sm ${
                     selectedSpecialty === spec
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'bg-white/5 text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#E8F4EC] text-[#0B431E] border border-[#0B431E]/30'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   {spec}
@@ -410,17 +407,17 @@ export default function App() {
 
         {/* 5. 16-PRODUCT GRID */}
         {filteredProducts.length === 0 ? (
-          <div className="p-12 text-center rounded-3xl glass-panel border border-white/10 my-8">
-            <Layers className="w-10 h-10 text-slate-500 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-white">No products found</h3>
-            <p className="text-xs text-slate-400 mt-1">Try adjusting your filters or search keywords.</p>
+          <div className="p-12 text-center rounded-3xl bg-white border border-slate-200 shadow-sm my-8">
+            <Layers className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+            <h3 className="text-base font-bold text-slate-800">No products found</h3>
+            <p className="text-xs text-slate-500 mt-1">Try adjusting your filters or search keywords.</p>
             <button
               onClick={() => {
                 setActiveTab('all');
                 setSelectedSpecialty('ALL');
                 setSearchQuery('');
               }}
-              className="mt-4 px-4 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white"
+              className="mt-4 px-4 py-2 rounded-xl text-xs font-bold bg-[#0B431E] hover:bg-[#14632E] text-white"
             >
               Reset Filters
             </button>
@@ -446,18 +443,18 @@ export default function App() {
       </main>
 
       {/* 6. PERSISTENT GLOBAL "QUICK-JUMP" COMMAND MATRIX (THUMB ZONE) */}
-      <div className="fixed bottom-4 inset-x-0 z-40 flex items-center justify-center pointer-events-none">
+      <div className="fixed bottom-5 inset-x-0 z-40 flex items-center justify-center pointer-events-none">
         <button
           onClick={() => setIsQuickJumpOpen(true)}
-          className="pointer-events-auto group flex items-center gap-2.5 px-5 py-3 rounded-full bg-slate-900/90 hover:bg-slate-900 border border-amber-400/50 hover:border-amber-400 text-white shadow-2xl backdrop-blur-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow-gold/40"
+          className="pointer-events-auto group flex items-center gap-2.5 px-5 py-3 rounded-full bg-[#0B431E] hover:bg-[#14632E] border border-[#96916E]/40 text-white shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95"
         >
-          <div className="w-6 h-6 rounded-full bg-amber-400 flex items-center justify-center text-slate-950 font-black text-xs shadow-md">
+          <div className="w-6 h-6 rounded-full bg-[#96916E] flex items-center justify-center text-white font-black text-xs shadow-md">
             <Zap className="w-3.5 h-3.5 fill-current" />
           </div>
           <span className="text-xs font-extrabold tracking-wide uppercase">
             1.5s Omni-Matrix
           </span>
-          <span className="text-[10px] text-amber-300 font-mono bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">
+          <span className="text-[10px] text-white/90 font-mono bg-white/20 px-2 py-0.5 rounded-full border border-white/20 font-bold">
             Thumb Zone
           </span>
         </button>

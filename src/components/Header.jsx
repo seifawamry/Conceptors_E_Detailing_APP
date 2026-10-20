@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, HardDriveDownload, CheckCircle2, BarChart2, ListPlus } from 'lucide-react';
+import { Wifi, WifiOff, CheckCircle2, BarChart2, ListPlus, ShieldCheck } from 'lucide-react';
+import ConceptorsLogo from './ConceptorsLogo.jsx';
 
 export default function Header({ 
   onOpenLogs, 
@@ -13,7 +14,7 @@ export default function Header({
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const handleOffline = () => setIsOffline(false);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -52,21 +53,20 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/10 bg-[#090D16]/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200/90 shadow-sm backdrop-blur-md">
+      {/* Top Brand Accent Line */}
+      <div className="h-1 w-full bg-gradient-to-r from-[#0B431E] via-[#14632E] to-[#96916E]" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         
-        {/* Brand & Title */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 flex items-center justify-center font-black text-white text-xl shadow-glow-emerald border border-white/20">
-            C
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                THE CONCEPTORS <span className="text-xs font-normal text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full bg-emerald-500/10 hidden sm:inline-block">ANIMAL HEALTH</span>
-              </h1>
-            </div>
-            <p className="text-xs text-slate-400 font-medium">Veterinary E-Detailing Suite • 16-Product Master Portfolio</p>
+        {/* Brand & Regulatory Mark */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <ConceptorsLogo className="h-10 sm:h-11" />
+
+          {/* Mandatory Brand Banner (from Reference Sheet) */}
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-[10px] font-extrabold uppercase tracking-wider">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#0B431E]" />
+            <span>FOR VETERINARY USE ONLY</span>
           </div>
         </div>
 
@@ -74,37 +74,37 @@ export default function Header({
         <div className="flex items-center gap-2 sm:gap-3">
           
           {/* Offline Ready Live Status Badge */}
-          <div 
+          <button 
             onClick={preCacheAllSlides}
-            title="Click to verify or precache all slides for 100% offline clinic visits"
-            className="cursor-pointer group flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-xs font-medium hover:border-emerald-400 transition-all shadow-glow-emerald/30"
+            title="Click to verify or precache all 187 slides for 100% offline clinic visits"
+            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-bold hover:bg-[#D1EADC] transition-all"
           >
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-600 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0B431E]"></span>
             </span>
-            <span className="hidden md:inline font-semibold">Offline Ready</span>
-            <span className="text-slate-400 text-[10px] hidden lg:inline">• All Slides Cached</span>
+            <span className="hidden sm:inline">Offline Ready</span>
+            <span className="text-[#0B431E]/70 text-[10.5px] hidden md:inline">• All Slides Cached</span>
             {cacheProgress ? (
-              <span className="text-[10px] text-amber-300 font-mono">
+              <span className="text-[10px] text-[#0B431E] font-mono font-bold">
                 {cacheProgress.current}/{cacheProgress.total}
               </span>
             ) : (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 ml-0.5" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#0B431E]" />
             )}
-          </div>
+          </button>
 
-          {/* Online/Offline status icon indicator */}
-          <div className="hidden sm:flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-white/5 border border-white/10 text-slate-300">
+          {/* Online/Offline status indicator */}
+          <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700">
             {isOnline ? (
               <>
-                <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-slate-400">Online</span>
+                <Wifi className="w-3.5 h-3.5 text-[#0B431E]" />
+                <span className="text-slate-600">Online</span>
               </>
             ) : (
               <>
-                <WifiOff className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-amber-300">Offline Mode</span>
+                <WifiOff className="w-3.5 h-3.5 text-amber-600" />
+                <span className="text-amber-800">Clinic Offline</span>
               </>
             )}
           </div>
@@ -112,16 +112,16 @@ export default function Header({
           {/* Active Call Playlist Button */}
           <button
             onClick={onOpenPlaylist}
-            className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+            className={`min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
               playlistCount > 0 
-                ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-glow-emerald' 
-                : 'bg-white/5 hover:bg-white/10 text-slate-200 border-white/10'
+                ? 'bg-[#0B431E] text-white border-[#0B431E] shadow-sm' 
+                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
             }`}
           >
             <ListPlus className="w-4 h-4" />
             <span className="hidden sm:inline">Call Playlist</span>
             {playlistCount > 0 && (
-              <span className="w-4 h-4 rounded-full bg-slate-950 text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 text-[10.5px] font-black flex items-center justify-center">
                 {playlistCount}
               </span>
             )}
@@ -130,11 +130,11 @@ export default function Header({
           {/* Call Logs & Analytics */}
           <button
             onClick={onOpenLogs}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 hover:border-white/20 transition-all"
+            className="min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 transition-all"
             title="View Call Session Logs & Analytics"
           >
-            <BarChart2 className="w-4 h-4 text-cyan-400" />
-            <span className="hidden sm:inline">Call Logs</span>
+            <BarChart2 className="w-4 h-4 text-[#0B431E]" />
+            <span className="hidden sm:inline">Analytics</span>
           </button>
 
         </div>

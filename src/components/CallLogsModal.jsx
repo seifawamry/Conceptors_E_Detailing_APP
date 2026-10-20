@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Download, FileSpreadsheet, Trash2, Calendar, Clock, BarChart2, ShieldCheck } from 'lucide-react';
+import React from 'react';
+import { X, Download, FileSpreadsheet, Trash2, Calendar, Clock, BarChart2 } from 'lucide-react';
 
 export default function CallLogsModal({
   isOpen,
@@ -54,113 +54,119 @@ export default function CallLogsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-150">
       <div 
-        className="relative w-full max-w-4xl glass-modal rounded-3xl p-6 shadow-2xl border border-white/20 flex flex-col max-h-[90vh] overflow-hidden"
+        className="relative w-full max-w-4xl bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 flex flex-col max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10 flex-shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-400">
+            <div className="w-10 h-10 rounded-2xl bg-[#E8F4EC] border border-[#0B431E]/20 flex items-center justify-center text-[#0B431E] shadow-sm">
               <BarChart2 className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Call Logs & Rep Analytics</h3>
-              <p className="text-xs text-slate-400">Offline session tracking and doctor detailing telemetry</p>
+              <h3 className="text-lg font-extrabold text-[#0B431E]">In-Clinic Detailing Analytics</h3>
+              <p className="text-xs text-slate-500 font-medium">Session duration, slide dwell metrics, and doctor presentation audit log</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content Body */}
-        <div className="overflow-y-auto flex-1 py-4 space-y-6">
-          {/* KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
-              <Clock className="w-8 h-8 text-emerald-400" />
-              <div>
-                <div className="text-2xl font-black text-white">{totalMinutes} <span className="text-sm font-normal text-slate-400">min</span></div>
-                <div className="text-xs text-slate-400 font-medium">Total Detail Time</div>
-              </div>
+        {/* Analytics KPI Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4 flex-shrink-0">
+          <div className="p-4 rounded-2xl bg-[#FAF9F5] border border-slate-200">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[#0B431E]" />
+              <span>Slides Presented</span>
             </div>
-
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
-              <Calendar className="w-8 h-8 text-amber-400" />
-              <div>
-                <div className="text-2xl font-black text-white">{totalSlidesViewed}</div>
-                <div className="text-xs text-slate-400 font-medium">Slides Presented</div>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
-              <ShieldCheck className="w-8 h-8 text-cyan-400" />
-              <div>
-                <div className="text-sm font-bold text-white line-clamp-1">
-                  {topProducts.length > 0 ? topProducts[0][0] : 'None yet'}
-                </div>
-                <div className="text-xs text-slate-400 font-medium">Most Detailed Product</div>
-              </div>
+            <div className="text-2xl font-black text-[#0B431E] mt-1 font-mono">
+              {totalSlidesViewed}
             </div>
           </div>
 
-          {/* Table of Slides Viewed */}
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-              Detailing Activity History ({callLogs.length} events)
-            </h4>
+          <div className="p-4 rounded-2xl bg-[#FAF9F5] border border-slate-200">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-[#96916E]" />
+              <span>Detailing Time</span>
+            </div>
+            <div className="text-2xl font-black text-[#96916E] mt-1 font-mono">
+              {totalMinutes} <span className="text-xs font-normal text-slate-500">min ({totalDurationSec}s)</span>
+            </div>
+          </div>
 
-            {callLogs.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 rounded-2xl border border-white/5 bg-white/5 text-xs">
-                No detailing calls logged yet. Start presenting slides to automatically record presentation telemetry.
-              </div>
-            ) : (
-              <div className="rounded-xl border border-white/10 overflow-hidden bg-black/40">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-white/5 text-slate-400 uppercase font-mono text-[10px] border-b border-white/10">
-                    <tr>
-                      <th className="py-2.5 px-3">Time</th>
-                      <th className="py-2.5 px-3">Company</th>
-                      <th className="py-2.5 px-3">Product</th>
-                      <th className="py-2.5 px-3">Slide</th>
-                      <th className="py-2.5 px-3 text-right">Duration</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {callLogs.slice(0, 50).map((log, index) => (
-                      <tr key={index} className="hover:bg-white/5 transition-colors">
-                        <td className="py-2 px-3 font-mono text-slate-400">
-                          {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                        </td>
-                        <td className="py-2 px-3 font-semibold">{log.company}</td>
-                        <td className="py-2 px-3 text-white">{log.productName}</td>
-                        <td className="py-2 px-3 font-mono text-emerald-400">#{log.slideNumber}</td>
-                        <td className="py-2 px-3 font-mono text-right text-slate-200">
-                          {log.durationSeconds}s
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+          <div className="p-4 rounded-2xl bg-[#FAF9F5] border border-slate-200">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              Top Detailed Therapy
+            </div>
+            <div className="text-sm font-extrabold text-slate-900 mt-1.5 truncate">
+              {topProducts[0] ? `${topProducts[0][0]} (${topProducts[0][1]} views)` : 'No calls recorded'}
+            </div>
           </div>
         </div>
 
-        {/* Modal Footer with Exports */}
-        <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
+        {/* Scrollable Logs Table */}
+        <div className="flex-1 overflow-y-auto no-scrollbar border border-slate-200 rounded-2xl bg-white">
+          {callLogs.length === 0 ? (
+            <div className="py-16 text-center text-slate-400">
+              <BarChart2 className="w-10 h-10 mx-auto mb-2 opacity-30 text-[#0B431E]" />
+              <p className="text-xs font-bold text-slate-600">No slide impressions recorded yet</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Start presenting products to automatically track detailing dwell times.</p>
+            </div>
+          ) : (
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#FAF9F5] text-slate-600 uppercase text-[10px] font-black border-b border-slate-200 sticky top-0">
+                <tr>
+                  <th className="py-2.5 px-3">Time</th>
+                  <th className="py-2.5 px-3">Company</th>
+                  <th className="py-2.5 px-3">Product</th>
+                  <th className="py-2.5 px-3">Slide</th>
+                  <th className="py-2.5 px-3 text-right">Dwell Time</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {callLogs.map((log, index) => (
+                  <tr key={index} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-2.5 px-3 font-mono text-[11px] text-slate-500">
+                      {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </td>
+                    <td className="py-2.5 px-3 font-semibold text-[#0B431E]">
+                      {log.company}
+                    </td>
+                    <td className="py-2.5 px-3 font-extrabold text-slate-900">
+                      {log.productName}
+                    </td>
+                    <td className="py-2.5 px-3 font-mono text-slate-600">
+                      Slide #{log.slideNumber}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-mono font-bold text-[#0B431E]">
+                      {log.durationSeconds}s
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Modal Footer & Export Options */}
+        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
           <button
             onClick={onClearLogs}
             disabled={callLogs.length === 0}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 bg-rose-950/40 border border-rose-500/20 hover:bg-rose-900/50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-colors ${
+              callLogs.length > 0 
+                ? 'text-rose-600 hover:bg-rose-50' 
+                : 'text-slate-300 cursor-not-allowed'
+            }`}
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
             <span>Clear Logs</span>
           </button>
 
@@ -168,18 +174,26 @@ export default function CallLogsModal({
             <button
               onClick={exportCSV}
               disabled={callLogs.length === 0}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                callLogs.length > 0 
+                  ? 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200' 
+                  : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+              }`}
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              <FileSpreadsheet className="w-4 h-4 text-[#0B431E]" />
               <span>Export CSV</span>
             </button>
 
             <button
               onClick={exportJSON}
               disabled={callLogs.length === 0}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all shadow-glow-emerald disabled:opacity-30 disabled:cursor-not-allowed"
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                callLogs.length > 0 
+                  ? 'bg-[#0B431E] hover:bg-[#14632E] text-white shadow-sm' 
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+              }`}
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-4 h-4 text-white" />
               <span>Export JSON</span>
             </button>
           </div>
