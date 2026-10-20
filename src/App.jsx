@@ -533,7 +533,12 @@ export default function App() {
 
       {/* 6. PERSISTENT GLOBAL "QUICK-JUMP" COMMAND MATRIX (3D THUMB ZONE) */}
       {!activePresentationProduct && (
-        <div className="fixed bottom-5 inset-x-0 z-40 flex items-center justify-center pointer-events-none">
+        <div 
+          className="fixed bottom-5 inset-x-0 z-40 flex items-center justify-center pointer-events-none"
+          style={{
+            paddingBottom: 'max(0px, env(safe-area-inset-bottom, 0px))',
+          }}
+        >
           <button
             onClick={() => setIsQuickJumpOpen(true)}
             className="pointer-events-auto group flex items-center gap-2.5 px-6 py-3.5 rounded-full ui-3d-btn-primary border-t border-white/40 shadow-[0_16px_36px_rgba(11,67,30,0.4)] transition-all duration-200 hover:scale-105 active:scale-95"

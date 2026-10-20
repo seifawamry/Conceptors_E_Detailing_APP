@@ -5,6 +5,28 @@
 :root {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   color-scheme: light;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+html, body {
+  overflow-x: clip;
+}
+
+/* PWA Safe Area Insets for iPad & Mobile */
+.pwa-safe-top {
+  padding-top: max(8px, env(safe-area-inset-top, 0px));
+}
+
+.pwa-safe-bottom {
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+}
+
+.pwa-safe-sides {
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
 }
 
 /* Custom scrollbars */

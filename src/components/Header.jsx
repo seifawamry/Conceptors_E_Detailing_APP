@@ -53,18 +53,25 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/95 border-b border-slate-200/90 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] backdrop-blur-xl">
+    <header 
+      className="sticky top-0 z-50 w-full bg-white/95 border-b border-slate-200/90 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-all"
+      style={{
+        paddingTop: 'max(0px, env(safe-area-inset-top, 0px))',
+        paddingLeft: 'max(0px, env(safe-area-inset-left, 0px))',
+        paddingRight: 'max(0px, env(safe-area-inset-right, 0px))'
+      }}
+    >
       {/* Top Brand Accent Line */}
-      <div className="h-1 w-full bg-gradient-to-r from-[#0B431E] via-[#14632E] to-[#96916E]" />
+      <div className="h-1.5 w-full bg-gradient-to-r from-[#0B431E] via-[#14632E] to-[#96916E]" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-4">
         
         {/* Brand & Regulatory Mark */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <ConceptorsLogo className="h-10 sm:h-11" />
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          <ConceptorsLogo className="h-9 sm:h-11" />
 
           {/* Mandatory Brand Banner (from Reference Sheet) */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-[10px] font-extrabold uppercase tracking-wider shadow-sm">
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-[10px] font-extrabold uppercase tracking-wider shadow-sm select-none">
             <ShieldCheck className="w-3.5 h-3.5 text-[#0B431E]" />
             <span>FOR VETERINARY USE ONLY</span>
           </div>
@@ -77,25 +84,25 @@ export default function Header({
           <button 
             onClick={preCacheAllSlides}
             title="Click to verify or precache all 187 slides for 100% offline clinic visits"
-            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-bold hover:bg-[#D1EADC] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_1px_2px_rgba(0,0,0,0.05)] active:translate-y-0.5 transition-all"
+            className="group min-h-[44px] flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-bold hover:bg-[#D1EADC] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_1px_2px_rgba(0,0,0,0.05)] active:scale-95 transition-all cursor-pointer"
           >
-            <span className="relative flex h-2 w-2">
+            <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-600 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0B431E]"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0B431E]"></span>
             </span>
-            <span className="hidden sm:inline">Offline Ready</span>
-            <span className="text-[#0B431E]/70 text-[10.5px] hidden md:inline">• All Slides Cached</span>
+            <span className="hidden sm:inline font-extrabold">Offline Ready</span>
+            <span className="text-[#0B431E]/70 text-[10.5px] hidden md:inline">• All Cached</span>
             {cacheProgress ? (
               <span className="text-[10px] text-[#0B431E] font-mono font-bold">
                 {cacheProgress.current}/{cacheProgress.total}
               </span>
             ) : (
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#0B431E]" />
+              <CheckCircle2 className="w-4 h-4 text-[#0B431E]" />
             )}
           </button>
 
           {/* Online/Offline status indicator */}
-          <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 shadow-inner">
+          <div className="hidden sm:flex min-h-[44px] items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 shadow-inner select-none">
             {isOnline ? (
               <>
                 <Wifi className="w-3.5 h-3.5 text-[#0B431E]" />
@@ -112,7 +119,7 @@ export default function Header({
           {/* Active Call Playlist Button */}
           <button
             onClick={onOpenPlaylist}
-            className={`min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`min-h-[44px] flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
               playlistCount > 0 
                 ? 'ui-3d-btn-primary' 
                 : 'ui-3d-btn-secondary'
@@ -130,7 +137,7 @@ export default function Header({
           {/* Call Logs & Analytics */}
           <button
             onClick={onOpenLogs}
-            className="min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold ui-3d-btn-secondary"
+            className="min-h-[44px] flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-black ui-3d-btn-secondary cursor-pointer"
             title="View Call Session Logs & Analytics"
           >
             <BarChart2 className="w-4 h-4 text-[#0B431E]" />

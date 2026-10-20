@@ -16,6 +16,11 @@ export default function PlaylistDrawer({
     <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-150">
       <div 
         className="w-full max-w-md h-full bg-white p-6 shadow-2xl border-l border-slate-200 flex flex-col justify-between"
+        style={{
+          paddingTop: 'max(24px, env(safe-area-inset-top, 24px))',
+          paddingBottom: 'max(24px, env(safe-area-inset-bottom, 24px))',
+          paddingRight: 'max(24px, env(safe-area-inset-right, 24px))',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drawer Header */}

@@ -40,8 +40,8 @@ export default function PresentationMode({
 }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   
-  // Default to Clean Doctor Focus Mode: top toolbar hidden on launch so the slide is 100% visible & huge
-  const [showToolbars, setShowToolbars] = useState(false);
+  // Default to visible so reps always have immediate access to controls & exit
+  const [showToolbars, setShowToolbars] = useState(true);
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
   const [isLaserActive, setIsLaserActive] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -533,6 +533,11 @@ export default function PresentationMode({
             ? 'opacity-100 translate-y-0'
             : 'opacity-0 -translate-y-6 pointer-events-none'
         }`}
+        style={{
+          paddingTop: 'max(8px, env(safe-area-inset-top, 0px))',
+          paddingLeft: 'max(12px, env(safe-area-inset-left, 0px))',
+          paddingRight: 'max(12px, env(safe-area-inset-right, 0px))',
+        }}
       >
         {/* Main Header Row */}
         <div className="p-3 sm:p-4 flex items-center justify-between gap-2">
@@ -817,7 +822,14 @@ export default function PresentationMode({
       {/* ========================================================================= */}
       {/* 3. ALWAYS-AVAILABLE FLOATING STEP DOCK (3D SPATIAL THUMB ZONE)           */}
       {/* ========================================================================= */}
-      <div className="absolute bottom-3 sm:bottom-4 inset-x-0 z-40 px-2 sm:px-4 flex justify-center pointer-events-none select-none">
+      <div 
+        className="absolute bottom-3 sm:bottom-4 inset-x-0 z-40 px-2 sm:px-4 flex justify-center pointer-events-none select-none"
+        style={{
+          paddingBottom: 'max(12px, env(safe-area-inset-bottom, 0px))',
+          paddingLeft: 'max(8px, env(safe-area-inset-left, 0px))',
+          paddingRight: 'max(8px, env(safe-area-inset-right, 0px))',
+        }}
+      >
         <div className={`pointer-events-auto p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl flex items-center justify-between gap-2 max-w-full overflow-x-auto no-scrollbar ${
           isDarkMode 
             ? 'ui-3d-dock-dark text-white' 
@@ -964,6 +976,19 @@ export default function PresentationMode({
               {showToolbars ? <EyeOff className="w-4 h-4 text-emerald-300" /> : <Eye className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
               <span className="hidden 2xl:inline">{showToolbars ? 'Hide Top Tools' : 'Top Tools'}</span>
             </button>
+
+            {/* Quick Exit Button (Always Reachable in Thumb Zone) */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              className="min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl ui-3d-btn-secondary text-slate-700 hover:text-red-700 text-xs font-black flex items-center gap-1.5 whitespace-nowrap cursor-pointer active:scale-95 shadow-sm"
+              title="Exit Detailing & Return to Portfolio (Esc)"
+            >
+              <X className="w-4 h-4 text-red-600 flex-shrink-0" />
+              <span className="hidden sm:inline">Exit</span>
+            </button>
           </div>
 
           {/* 3. RIGHT THUMB: NEXT STEP / NEXT SLIDE / COMPLETE (3D PRIMARY BUTTON) */}
@@ -1017,7 +1042,13 @@ export default function PresentationMode({
       {/* 4. SLIDE-OVER DRAWER: 1.5-SECOND OMNI-MATRIX (ALWAYS WORKS 100% RELIABLY!) */}
       {/* ========================================================================= */}
       {activeDrawer === 'matrix' && (
-        <div className="absolute inset-y-0 right-0 z-50 w-full sm:w-[540px] bg-white text-slate-900 shadow-2xl border-l border-slate-200 flex flex-col justify-between animate-in slide-in-from-right duration-300">
+        <div 
+          className="absolute inset-y-0 right-0 z-50 w-full sm:w-[540px] bg-white text-slate-900 shadow-2xl border-l border-slate-200 flex flex-col justify-between animate-in slide-in-from-right duration-300"
+          style={{ 
+            paddingTop: 'max(0px, env(safe-area-inset-top, 0px))', 
+            paddingBottom: 'max(0px, env(safe-area-inset-bottom, 0px))' 
+          }}
+        >
           <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-amber-50 to-emerald-50">
             <div className="flex items-center gap-2.5">
               <div className="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-black shadow-sm">
@@ -1159,7 +1190,13 @@ export default function PresentationMode({
       {/* 5. SLIDE-OVER DRAWER: CLINICAL EVIDENCE & REFERENCES                       */}
       {/* ========================================================================= */}
       {activeDrawer === 'references' && (
-        <div className="absolute inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-white text-slate-900 shadow-2xl border-l border-slate-200 flex flex-col justify-between animate-in slide-in-from-right duration-300">
+        <div 
+          className="absolute inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-white text-slate-900 shadow-2xl border-l border-slate-200 flex flex-col justify-between animate-in slide-in-from-right duration-300"
+          style={{ 
+            paddingTop: 'max(0px, env(safe-area-inset-top, 0px))', 
+            paddingBottom: 'max(0px, env(safe-area-inset-bottom, 0px))' 
+          }}
+        >
           <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-[#F8FAFC]">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-700">
