@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { enterFullscreenLandscape } from '../utils/screenUtils.js';
 import { 
   Stethoscope, 
   Sparkles, 
@@ -122,11 +123,17 @@ export default function CallFlows({ callFlows = [], onLaunchFlow, allProductsMap
                         return (
                           <React.Fragment key={step.step || idx}>
                             <div 
-                              className="p-2.5 rounded-xl bg-[#FAF9F5] border border-slate-200 hover:border-[#0B431E]/40 transition-all flex flex-col justify-between flex-shrink-0 min-w-[130px] sm:min-w-[140px]"
+                              onClick={() => {
+                                enterFullscreenLandscape();
+                                onLaunchFlow(flow, idx);
+                              }}
+                              className="p-2.5 rounded-xl bg-[#FAF9F5] hover:bg-[#E8F4EC] border border-slate-200 hover:border-[#0B431E]/60 transition-all flex flex-col justify-between flex-shrink-0 min-w-[130px] sm:min-w-[140px] cursor-pointer group/step active:scale-95 shadow-sm"
+                              title={`Start Protocol at Step ${step.step}: ${prod?.name || step.label}`}
                             >
                               <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1">
-                                <span className="font-extrabold text-[#0B431E] font-mono">
-                                  STEP {step.step}
+                                <span className="font-extrabold text-[#0B431E] font-mono group-hover/step:underline flex items-center gap-1">
+                                  <span>STEP {step.step}</span>
+                                  <ArrowRight className="w-2.5 h-2.5 text-emerald-600 opacity-0 group-hover/step:opacity-100 transition-opacity" />
                                 </span>
                                 <span className="truncate text-[9px] opacity-80 uppercase font-semibold">
                                   {step.role}
@@ -137,7 +144,7 @@ export default function CallFlows({ callFlows = [], onLaunchFlow, allProductsMap
                                   className="w-2 h-2 rounded-full flex-shrink-0" 
                                   style={{ backgroundColor: prodAccent }}
                                 />
-                                <span className="text-xs font-extrabold text-slate-900 truncate">
+                                <span className="text-xs font-extrabold text-slate-900 truncate group-hover/step:text-[#0B431E]">
                                   {prod ? prod.shortName || prod.name : step.label}
                                 </span>
                               </div>
@@ -184,7 +191,10 @@ export default function CallFlows({ callFlows = [], onLaunchFlow, allProductsMap
                 </button>
 
                 <button
-                  onClick={() => onLaunchFlow(flow)}
+                  onClick={() => {
+                    enterFullscreenLandscape();
+                    onLaunchFlow(flow, 0);
+                  }}
                   className="min-h-[44px] flex items-center gap-2 py-2.5 px-5 rounded-xl text-xs sm:text-sm font-extrabold text-white bg-[#0B431E] hover:bg-[#14632E] transition-all shadow-sm active:scale-[0.98]"
                 >
                   <Play className="w-4 h-4 fill-current text-white" />

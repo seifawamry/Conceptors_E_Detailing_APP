@@ -8,6 +8,7 @@ import QuickJumpMatrix from './components/QuickJumpMatrix.jsx';
 import CallLogsModal from './components/CallLogsModal.jsx';
 import PlaylistDrawer from './components/PlaylistDrawer.jsx';
 import ConceptorsLogo from './components/ConceptorsLogo.jsx';
+import { enterFullscreenLandscape } from './utils/screenUtils.js';
 import { 
   Star, 
   Search, 
@@ -134,6 +135,7 @@ export default function App() {
   };
 
   const launchTopTierCallNow = () => {
+    enterFullscreenLandscape();
     setCallPlaylist([...topTierProducts]);
     const protocolObj = {
       id: 'top-tier-core-focus',
@@ -159,6 +161,7 @@ export default function App() {
 
   const startPlaylistCall = () => {
     if (callPlaylist.length > 0) {
+      enterFullscreenLandscape();
       const isTopTierCall = callPlaylist.length === 10 && callPlaylist.every((p) => p.isTopTier);
       const protocolObj = {
         id: isTopTierCall ? 'top-tier-core-focus' : 'custom-playlist',
@@ -186,13 +189,15 @@ export default function App() {
     }
   };
 
-  // Launch a pre-built clinical flow
-  const handleLaunchFlow = (flow) => {
+  // Launch a pre-built clinical flow (optionally start directly at any step e.g. Step 2)
+  const handleLaunchFlow = (flow, initialStepIndex = 0) => {
+    enterFullscreenLandscape();
     const flowProducts = flow.productIds
       .map((id) => allProductsMap[id])
       .filter(Boolean);
 
     if (flowProducts.length > 0) {
+      const safeIndex = Math.min(Math.max(0, initialStepIndex), flowProducts.length - 1);
       const protocolObj = {
         id: flow.id,
         title: flow.title,
@@ -210,11 +215,11 @@ export default function App() {
         })),
         productIds: flow.productIds,
         products: flowProducts,
-        currentProductIndex: 0,
+        currentProductIndex: safeIndex,
       };
       setActiveProtocol(protocolObj);
       setCallPlaylist(flowProducts);
-      setActivePresentationProduct(flowProducts[0]);
+      setActivePresentationProduct(flowProducts[safeIndex]);
     }
   };
 
@@ -508,10 +513,14 @@ export default function App() {
               <ProductCard
                 key={product.id}
                 product={product}
-                onStartPresentation={(p) => setActivePresentationProduct(p)}
+                onStartPresentation={(p) => {
+                  enterFullscreenLandscape();
+                  setActivePresentationProduct(p);
+                }}
                 isInPlaylist={callPlaylist.some((item) => item.id === product.id)}
                 onTogglePlaylist={togglePlaylist}
                 onSelectRelated={(relatedId) => {
+                  enterFullscreenLandscape();
                   const target = allProductsMap[relatedId];
                   if (target) setActivePresentationProduct(target);
                 }}
