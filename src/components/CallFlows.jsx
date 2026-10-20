@@ -58,7 +58,7 @@ export default function CallFlows({ callFlows = [], onLaunchFlow, allProductsMap
           return (
             <div
               key={flow.id}
-              className="relative rounded-3xl bg-white border border-slate-200/90 hover:border-[#0B431E]/40 transition-all duration-300 overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-brand"
+              className="relative rounded-3xl overflow-hidden flex flex-col justify-between group ui-3d-card border border-slate-200/90 hover:border-[#0B431E]/40"
             >
               {/* Flow Header */}
               <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
@@ -180,11 +180,11 @@ export default function CallFlows({ callFlows = [], onLaunchFlow, allProductsMap
                 )}
               </div>
 
-              {/* Bottom Actions Bar (Tablet Reachability 48px Height) */}
+              {/* Bottom Actions Bar (Tablet Reachability 48px Height with 3D Depth) */}
               <div className="px-5 py-3.5 sm:px-6 bg-[#FAF9F5] border-t border-slate-100 flex items-center justify-between gap-3">
                 <button
                   onClick={(e) => toggleExpand(flow.id, e)}
-                  className="min-h-[44px] px-3 py-2 rounded-xl hover:bg-slate-200/60 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-colors"
+                  className="min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 ui-3d-btn-secondary"
                 >
                   <span>{isExpanded ? 'Hide Mechanism' : 'View Clinical Mechanism'}</span>
                   {isExpanded ? <ChevronUp className="w-4 h-4 text-[#0B431E]" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
@@ -195,7 +195,7 @@ export default function CallFlows({ callFlows = [], onLaunchFlow, allProductsMap
                     enterFullscreenLandscape();
                     onLaunchFlow(flow, 0);
                   }}
-                  className="min-h-[44px] flex items-center gap-2 py-2.5 px-5 rounded-xl text-xs sm:text-sm font-extrabold text-white bg-[#0B431E] hover:bg-[#14632E] transition-all shadow-sm active:scale-[0.98]"
+                  className="min-h-[44px] flex items-center gap-2 py-2.5 px-5 rounded-xl text-xs sm:text-sm font-extrabold ui-3d-btn-primary"
                 >
                   <Play className="w-4 h-4 fill-current text-white" />
                   <span>Launch Protocol Call</span>

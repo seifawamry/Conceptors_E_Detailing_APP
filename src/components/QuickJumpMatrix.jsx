@@ -65,10 +65,10 @@ export default function QuickJumpMatrix({
                       onSelectProduct(p);
                       onClose();
                     }}
-                    className={`relative p-3 rounded-2xl border text-left transition-all group flex flex-col justify-between shadow-sm active:scale-[0.98] ${
+                    className={`relative p-3 rounded-2xl text-left transition-all group flex flex-col justify-between ${
                       isActive
-                        ? 'bg-[#0B431E] text-white border-[#0B431E] shadow-md scale-[1.02]'
-                        : 'bg-[#F5F4F0] hover:bg-[#E8F4EC] border-slate-200 hover:border-[#0B431E]/30 text-slate-800'
+                        ? 'ui-3d-btn-primary scale-[1.02]'
+                        : 'ui-3d-btn-secondary text-slate-800'
                     }`}
                   >
                     <div>

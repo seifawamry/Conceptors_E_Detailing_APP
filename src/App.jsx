@@ -7,7 +7,6 @@ import PresentationMode from './components/PresentationMode.jsx';
 import QuickJumpMatrix from './components/QuickJumpMatrix.jsx';
 import CallLogsModal from './components/CallLogsModal.jsx';
 import PlaylistDrawer from './components/PlaylistDrawer.jsx';
-import ThreeDViewer from './components/ThreeDViewer.jsx';
 import ConceptorsLogo from './components/ConceptorsLogo.jsx';
 import { enterFullscreenLandscape } from './utils/screenUtils.js';
 import { 
@@ -70,7 +69,6 @@ export default function App() {
   
   // Presentation & Playlist
   const [activePresentationProduct, setActivePresentationProduct] = useState(null);
-  const [active3DProduct, setActive3DProduct] = useState(null);
   const [activeProtocol, setActiveProtocol] = useState(null);
   const [callPlaylist, setCallPlaylist] = useState([]);
   const [isPlaylistDrawerOpen, setIsPlaylistDrawerOpen] = useState(false);
@@ -318,11 +316,11 @@ export default function App() {
               16 clinical products across 4 principal partner portfolios. Equipped with clinic light presentation mode, interactive laser pointer, and 100% offline clinic caching.
             </p>
 
-            {/* 1-Tap Call Actions */}
+            {/* 1-Tap Call Actions (3D Spatial Tactile Buttons) */}
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <button
                 onClick={launchTopTierCallNow}
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-[#0B431E] hover:bg-[#14632E] transition-all shadow-sm active:scale-[0.98]"
+                className="flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold ui-3d-btn-primary"
               >
                 <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
                 <span>⭐ 1-Tap Launch Top-Tier Call (10 Products)</span>
@@ -330,7 +328,7 @@ export default function App() {
 
               <button
                 onClick={loadTopTierCall}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-[#0B431E] bg-[#E8F4EC] hover:bg-[#d5ecd9] border border-[#0B431E]/20 transition-all shadow-sm"
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold ui-3d-btn-secondary"
               >
                 <Layers className="w-4 h-4 text-[#0B431E]" />
                 <span>Manage Playlist ({callPlaylist.length})</span>
@@ -338,9 +336,9 @@ export default function App() {
 
               <button
                 onClick={() => setIsQuickJumpOpen(true)}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-[#0B431E] bg-white hover:bg-slate-50 border border-slate-200 hover:border-[#0B431E]/40 transition-all shadow-sm"
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold ui-3d-btn-amber"
               >
-                <Zap className="w-4 h-4 text-[#0B431E]" />
+                <Zap className="w-4 h-4 text-slate-950 fill-current" />
                 <span>Open 1.5s Omni-Matrix</span>
               </button>
             </div>
@@ -360,15 +358,15 @@ export default function App() {
         {/* 4. DASHBOARD FILTERS & SEARCH */}
         <div className="space-y-4 mb-6">
           
-          {/* Top-Tier Focus and Company Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {/* Top-Tier Focus and Company Tabs (3D Sunken Track) */}
+          <div className="p-1 rounded-2xl ui-3d-track flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
             {/* ⭐ Top-Tier Focus (10) Default Active Tab */}
             <button
               onClick={() => setActiveTab('top-tier')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all duration-200 border shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all duration-200 ${
                 activeTab === 'top-tier'
-                  ? 'bg-[#0B431E] text-white border-[#0B431E] scale-[1.02]'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-[#96916E]'
+                  ? 'ui-3d-pill-active scale-[1.01]'
+                  : 'bg-white/80 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60'
               }`}
             >
               <Star className={`w-3.5 h-3.5 ${activeTab === 'top-tier' ? 'fill-amber-300 text-amber-300' : 'fill-[#96916E] text-[#96916E]'}`} />
@@ -378,10 +376,10 @@ export default function App() {
             {/* All Portfolio (16) */}
             <button
               onClick={() => setActiveTab('all')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                 activeTab === 'all'
-                  ? 'bg-[#0B431E] text-white border-[#0B431E]'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
+                  ? 'ui-3d-pill-active scale-[1.01]'
+                  : 'bg-white/80 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -391,10 +389,10 @@ export default function App() {
             {/* Catalysis */}
             <button
               onClick={() => setActiveTab('catalysis')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                 activeTab === 'catalysis'
-                  ? 'bg-[#0B431E] text-white border-[#0B431E]'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  ? 'ui-3d-pill-active scale-[1.01]'
+                  : 'bg-white/80 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-[#0B431E]"></span>
@@ -404,10 +402,10 @@ export default function App() {
             {/* B.A.R.D */}
             <button
               onClick={() => setActiveTab('bard')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                 activeTab === 'bard'
-                  ? 'bg-[#B45309] text-white border-[#B45309]'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  ? 'bg-gradient-to-b from-amber-600 to-amber-700 text-white shadow-md border-t border-white/30'
+                  : 'bg-white/80 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
@@ -417,10 +415,10 @@ export default function App() {
             {/* Vitasignia */}
             <button
               onClick={() => setActiveTab('vitasignia')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                 activeTab === 'vitasignia'
-                  ? 'bg-[#1D4ED8] text-white border-[#1D4ED8]'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  ? 'bg-gradient-to-b from-blue-600 to-blue-700 text-white shadow-md border-t border-white/30'
+                  : 'bg-white/80 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-[#3B82F6]"></span>
@@ -430,10 +428,10 @@ export default function App() {
             {/* Ringbio */}
             <button
               onClick={() => setActiveTab('ringbio')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                 activeTab === 'ringbio'
-                  ? 'bg-[#BE185D] text-white border-[#BE185D]'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  ? 'bg-gradient-to-b from-pink-600 to-pink-700 text-white shadow-md border-t border-white/30'
+                  : 'bg-white/80 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-[#EC4899]"></span>
@@ -526,7 +524,6 @@ export default function App() {
                   const target = allProductsMap[relatedId];
                   if (target) setActivePresentationProduct(target);
                 }}
-                onOpen3D={(p) => setActive3DProduct(p)}
               />
             ))}
           </div>
@@ -534,20 +531,20 @@ export default function App() {
 
       </main>
 
-      {/* 6. PERSISTENT GLOBAL "QUICK-JUMP" COMMAND MATRIX (THUMB ZONE) */}
+      {/* 6. PERSISTENT GLOBAL "QUICK-JUMP" COMMAND MATRIX (3D THUMB ZONE) */}
       {!activePresentationProduct && (
         <div className="fixed bottom-5 inset-x-0 z-40 flex items-center justify-center pointer-events-none">
           <button
             onClick={() => setIsQuickJumpOpen(true)}
-            className="pointer-events-auto group flex items-center gap-2.5 px-5 py-3 rounded-full bg-[#0B431E] hover:bg-[#14632E] border border-[#96916E]/40 text-white shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95"
+            className="pointer-events-auto group flex items-center gap-2.5 px-6 py-3.5 rounded-full ui-3d-btn-primary border-t border-white/40 shadow-[0_16px_36px_rgba(11,67,30,0.4)] transition-all duration-200 hover:scale-105 active:scale-95"
           >
-            <div className="w-6 h-6 rounded-full bg-[#96916E] flex items-center justify-center text-white font-black text-xs shadow-md">
+            <div className="w-6 h-6 rounded-full bg-amber-400 flex items-center justify-center text-slate-950 font-black text-xs shadow-md">
               <Zap className="w-3.5 h-3.5 fill-current" />
             </div>
             <span className="text-xs font-extrabold tracking-wide uppercase">
               1.5s Omni-Matrix
             </span>
-            <span className="text-[10px] text-white/90 font-mono bg-white/20 px-2 py-0.5 rounded-full border border-white/20 font-bold">
+            <span className="text-[10px] text-white/95 font-mono bg-white/20 px-2 py-0.5 rounded-full border border-white/20 font-bold">
               Thumb Zone
             </span>
           </button>
@@ -574,15 +571,6 @@ export default function App() {
           onLaunchProtocolFlow={handleLaunchFlow}
           onOpenQuickJump={() => setIsQuickJumpOpen(true)}
           onRecordSlideView={handleRecordSlideView}
-          onOpen3D={(p) => setActive3DProduct(p)}
-        />
-      )}
-
-      {/* 7B. 3D BIOLOGICAL & MOLECULAR SIMULATION STUDIO */}
-      {active3DProduct && (
-        <ThreeDViewer
-          product={active3DProduct}
-          onClose={() => setActive3DProduct(null)}
         />
       )}
 

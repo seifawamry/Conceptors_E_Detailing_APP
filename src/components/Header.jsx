@@ -53,7 +53,7 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200/90 shadow-sm backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full bg-white/95 border-b border-slate-200/90 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] backdrop-blur-xl">
       {/* Top Brand Accent Line */}
       <div className="h-1 w-full bg-gradient-to-r from-[#0B431E] via-[#14632E] to-[#96916E]" />
 
@@ -64,7 +64,7 @@ export default function Header({
           <ConceptorsLogo className="h-10 sm:h-11" />
 
           {/* Mandatory Brand Banner (from Reference Sheet) */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-[10px] font-extrabold uppercase tracking-wider">
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-[10px] font-extrabold uppercase tracking-wider shadow-sm">
             <ShieldCheck className="w-3.5 h-3.5 text-[#0B431E]" />
             <span>FOR VETERINARY USE ONLY</span>
           </div>
@@ -77,7 +77,7 @@ export default function Header({
           <button 
             onClick={preCacheAllSlides}
             title="Click to verify or precache all 187 slides for 100% offline clinic visits"
-            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-bold hover:bg-[#D1EADC] transition-all"
+            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-bold hover:bg-[#D1EADC] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_1px_2px_rgba(0,0,0,0.05)] active:translate-y-0.5 transition-all"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-600 opacity-75"></span>
@@ -95,7 +95,7 @@ export default function Header({
           </button>
 
           {/* Online/Offline status indicator */}
-          <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700">
+          <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 shadow-inner">
             {isOnline ? (
               <>
                 <Wifi className="w-3.5 h-3.5 text-[#0B431E]" />
@@ -112,16 +112,16 @@ export default function Header({
           {/* Active Call Playlist Button */}
           <button
             onClick={onOpenPlaylist}
-            className={`min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
+            className={`min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
               playlistCount > 0 
-                ? 'bg-[#0B431E] text-white border-[#0B431E] shadow-sm' 
-                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
+                ? 'ui-3d-btn-primary' 
+                : 'ui-3d-btn-secondary'
             }`}
           >
             <ListPlus className="w-4 h-4" />
             <span className="hidden sm:inline">Call Playlist</span>
             {playlistCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 text-[10.5px] font-black flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 text-[10.5px] font-black flex items-center justify-center shadow-sm">
                 {playlistCount}
               </span>
             )}
@@ -130,7 +130,7 @@ export default function Header({
           {/* Call Logs & Analytics */}
           <button
             onClick={onOpenLogs}
-            className="min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 transition-all"
+            className="min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold ui-3d-btn-secondary"
             title="View Call Session Logs & Analytics"
           >
             <BarChart2 className="w-4 h-4 text-[#0B431E]" />

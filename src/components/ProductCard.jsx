@@ -10,7 +10,6 @@ import {
   Pill, 
   Activity,
   RotateCw,
-  Box,
   BookOpen
 } from 'lucide-react';
 import { clinicalDatabase } from '../data/clinicalData.js';
@@ -21,7 +20,6 @@ export default function ProductCard({
   isInPlaylist,
   onTogglePlaylist,
   onSelectRelated,
-  onOpen3D,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [tiltStyle, setTiltStyle] = useState({});
@@ -151,19 +149,6 @@ export default function ProductCard({
               </div>
             )}
 
-            {/* 3D Molecule Launch Pill on Packshot */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onOpen3D) onOpen3D(product);
-              }}
-              className="absolute top-12 right-3 z-20 px-2.5 py-1 rounded-xl bg-slate-900/80 hover:bg-[#0B431E] text-emerald-300 hover:text-white border border-white/20 backdrop-blur-md text-[10.5px] font-black flex items-center gap-1 shadow-lg transition-all active:scale-95"
-              title="Open Interactive 3D Biological & Molecular Studio"
-            >
-              <Box className="w-3.5 h-3.5 text-emerald-400" />
-              <span>3D Bio/MOA</span>
-            </button>
-
             {/* Primary Clinical Endpoint Tag on packshot */}
             {primaryEvidence && (
               <div className="absolute bottom-2.5 left-3 z-10 hidden sm:flex items-center gap-1 text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-[#0B431E]/90 text-white backdrop-blur-md shadow-sm">
@@ -280,36 +265,37 @@ export default function ProductCard({
                 </div>
               )}
 
-              {/* Action Buttons: 1-Tap Present & Playlist Toggle (Tablet 44px+ Hit Target) */}
+              {/* Action Buttons: 3D Physical Tactile Buttons */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => onStartPresentation(product)}
-                  className="flex-1 min-h-[46px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-[#0B431E] hover:bg-[#14632E] transition-all shadow-md active:scale-95"
+                  className="flex-1 min-h-[46px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs sm:text-sm font-extrabold ui-3d-btn-primary"
                 >
                   <Play className="w-4 h-4 fill-current text-white" />
                   <span>Present Slides</span>
                 </button>
 
-                {/* 3D Studio Button */}
+                {/* 3D Flip Quick Action */}
                 <button
-                  onClick={() => onOpen3D && onOpen3D(product)}
-                  title="Launch 3D Biological & Molecular Studio"
-                  className="min-h-[46px] min-w-[46px] p-2.5 rounded-2xl border border-emerald-300/60 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 transition-all flex items-center justify-center active:scale-95 shadow-sm"
+                  onClick={() => setIsFlipped(true)}
+                  title="3D Flip: View Posology & Trial Endpoints"
+                  className="min-h-[46px] min-w-[46px] p-2.5 rounded-2xl ui-3d-btn-secondary flex items-center justify-center"
                 >
-                  <Box className="w-5 h-5 text-emerald-700" />
+                  <RotateCw className="w-4 h-4 text-slate-700" />
                 </button>
 
+                {/* Playlist Toggle */}
                 <button
                   onClick={() => onTogglePlaylist(product)}
                   title={isInPlaylist ? "Remove from Call Playlist" : "Add to Call Playlist"}
-                  className={`min-h-[46px] min-w-[46px] p-2.5 rounded-2xl border transition-all flex items-center justify-center active:scale-95 ${
+                  className={`min-h-[46px] min-w-[46px] p-2.5 rounded-2xl transition-all flex items-center justify-center ${
                     isInPlaylist
-                      ? 'bg-[#96916E] text-white border-[#96916E]'
-                      : 'bg-white hover:bg-[#F8FAFC] text-slate-700 border-slate-200'
+                      ? 'ui-3d-btn-primary'
+                      : 'ui-3d-btn-secondary'
                   }`}
                 >
                   {isInPlaylist ? (
-                    <Check className="w-4 h-4 stroke-[3]" />
+                    <Check className="w-4 h-4 stroke-[3] text-white" />
                   ) : (
                     <Plus className="w-4 h-4 text-slate-600" />
                   )}
@@ -326,12 +312,12 @@ export default function ProductCard({
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">
-                <Box className="w-5 h-5 text-[#0B431E]" />
-                <span className="text-xs font-black uppercase text-[#0B431E]">3D Clinical Profile</span>
+                <Activity className="w-5 h-5 text-[#0B431E]" />
+                <span className="text-xs font-black uppercase text-[#0B431E]">Clinical Posology & Evidence</span>
               </div>
               <button
                 onClick={() => setIsFlipped(false)}
-                className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-[#0B431E] active:scale-95 text-xs font-bold flex items-center gap-1"
+                className="px-3 py-1.5 rounded-xl ui-3d-btn-secondary text-xs font-bold flex items-center gap-1.5"
               >
                 <span>Return</span>
                 <RotateCw className="w-3.5 h-3.5" />
@@ -372,21 +358,18 @@ export default function ProductCard({
 
           <div className="pt-3 border-t border-slate-200 flex flex-col gap-2 mt-4">
             <button
-              onClick={() => {
-                if (onOpen3D) onOpen3D(product);
-              }}
-              className="w-full min-h-[46px] rounded-2xl bg-[#0B431E] hover:bg-[#14632E] text-white text-xs font-black flex items-center justify-center gap-2 shadow-md active:scale-95"
+              onClick={() => onStartPresentation(product)}
+              className="w-full min-h-[46px] rounded-2xl ui-3d-btn-primary text-xs font-black flex items-center justify-center gap-2"
             >
-              <Box className="w-4 h-4 text-emerald-300" />
-              <span>Launch 3D Molecular Simulation</span>
+              <Play className="w-4 h-4 fill-current text-white" />
+              <span>Launch Fullscreen Detailing</span>
             </button>
 
             <button
-              onClick={() => onStartPresentation(product)}
-              className="w-full min-h-[42px] rounded-2xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95"
+              onClick={() => setIsFlipped(false)}
+              className="w-full min-h-[42px] rounded-2xl ui-3d-btn-secondary text-xs font-bold flex items-center justify-center gap-1.5"
             >
-              <Play className="w-3.5 h-3.5 fill-current text-[#0B431E]" />
-              <span>Present Product Slides</span>
+              <span>Back to Card Front</span>
             </button>
           </div>
         </div>

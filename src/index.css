@@ -148,9 +148,147 @@ button, a, input, select {
   transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 3D Pedestal Lighting Reflection */
-.pedestal-glow {
-  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.25) 0%, rgba(11, 67, 30, 0.08) 50%, transparent 75%);
+/* ========================================================================= */
+/* 3D SPATIAL INTERFACE DESIGN SYSTEM (TACTILE, ELEVATED & MODERN)          */
+/* ========================================================================= */
+
+/* 3D Elevated Clinical Card */
+.ui-3d-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 8px 24px -4px rgba(15, 23, 42, 0.08),
+    0 20px 36px -10px rgba(11, 67, 30, 0.06);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.ui-3d-card:hover {
+  border-color: rgba(11, 67, 30, 0.3);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 16px 36px -6px rgba(15, 23, 42, 0.14),
+    0 28px 50px -12px rgba(11, 67, 30, 0.12);
+}
+
+/* 3D Physical Tactile Buttons (Real Hardware-feel with depression on click) */
+.ui-3d-btn-primary {
+  background: linear-gradient(180deg, #14632E 0%, #0B431E 100%);
+  color: #FFFFFF;
+  border: 1px solid #083317;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 
+    0 3px 0 0 #05210F,
+    0 6px 14px -1px rgba(11, 67, 30, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.ui-3d-btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 
+    0 1px 0 0 #05210F,
+    0 2px 6px rgba(11, 67, 30, 0.25),
+    inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ui-3d-btn-secondary {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  color: #1E293B;
+  border: 1px solid #CBD5E1;
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 2.5px 0 0 #94A3B8,
+    0 4px 10px -2px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.ui-3d-btn-secondary:active {
+  transform: translateY(1.5px);
+  box-shadow: 
+    0 1px 0 0 #94A3B8,
+    0 2px 4px rgba(15, 23, 42, 0.06),
+    inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.ui-3d-btn-amber {
+  background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
+  color: #0F172A;
+  border: 1px solid #B45309;
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 
+    0 3px 0 0 #78350F,
+    0 6px 14px -1px rgba(217, 119, 6, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.ui-3d-btn-amber:active {
+  transform: translateY(2px);
+  box-shadow: 
+    0 1px 0 0 #78350F,
+    0 2px 5px rgba(217, 119, 6, 0.2);
+}
+
+/* 3D Spatial Floating Dock */
+.ui-3d-dock {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-top: 1.5px solid rgba(255, 255, 255, 1);
+  box-shadow: 
+    0 24px 48px -12px rgba(15, 23, 42, 0.22),
+    0 8px 16px -4px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.ui-3d-dock-dark {
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 24px 48px -12px rgba(0, 0, 0, 0.8),
+    0 8px 16px -4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+/* 3D Sunken Segmented Track */
+.ui-3d-track {
+  background: #EFECE6;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* 3D Floating Pill Button */
+.ui-3d-pill-active {
+  background: linear-gradient(180deg, #14632E 0%, #0B431E 100%);
+  color: #FFFFFF;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 4px 12px -2px rgba(11, 67, 30, 0.35),
+    0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* 3D Pedestal Stage for Packshots */
+.packshot-pedestal {
+  position: relative;
+}
+.packshot-pedestal::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 15%;
+  right: 15%;
+  height: 12px;
+  background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.35) 0%, transparent 75%);
+  filter: blur(4px);
+  pointer-events: none;
+  z-index: 5;
 }
 
 /* Spotlight Dimmer Overlay */

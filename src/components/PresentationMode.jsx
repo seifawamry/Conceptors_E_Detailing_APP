@@ -37,7 +37,6 @@ export default function PresentationMode({
   onLaunchProtocolFlow,
   onOpenQuickJump,
   onRecordSlideView,
-  onOpen3D,
 }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   
@@ -816,15 +815,15 @@ export default function PresentationMode({
       </div>
 
       {/* ========================================================================= */}
-      {/* 3. ALWAYS-AVAILABLE FLOATING STEP DOCK (TABLET & IPAD THUMB ZONE)         */}
+      {/* 3. ALWAYS-AVAILABLE FLOATING STEP DOCK (3D SPATIAL THUMB ZONE)           */}
       {/* ========================================================================= */}
       <div className="absolute bottom-3 sm:bottom-4 inset-x-0 z-40 px-2 sm:px-4 flex justify-center pointer-events-none select-none">
-        <div className={`pointer-events-auto p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl border backdrop-blur-2xl shadow-2xl flex items-center justify-between gap-2 max-w-full overflow-x-auto no-scrollbar ${
+        <div className={`pointer-events-auto p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl flex items-center justify-between gap-2 max-w-full overflow-x-auto no-scrollbar ${
           isDarkMode 
-            ? 'bg-slate-900/95 border-white/15 text-white' 
-            : 'bg-white/95 border-slate-200/90 text-slate-900'
+            ? 'ui-3d-dock-dark text-white' 
+            : 'ui-3d-dock text-slate-900'
         }`}>
-          {/* 1. LEFT THUMB: PREVIOUS STEP / PREVIOUS SLIDE */}
+          {/* 1. LEFT THUMB: PREVIOUS STEP / PREVIOUS SLIDE (3D TACTILE BUTTON) */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -835,12 +834,10 @@ export default function PresentationMode({
               }
             }}
             disabled={!hasPrevProduct && currentSlideIndex === 0}
-            className={`min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border flex items-center gap-2 transition-all active:scale-95 shadow-sm text-left flex-shrink-0 ${
+            className={`min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 text-left flex-shrink-0 ui-3d-btn-secondary ${
               !hasPrevProduct && currentSlideIndex === 0
                 ? 'opacity-30 border-transparent text-slate-400 cursor-not-allowed pointer-events-none'
-                : isDarkMode
-                  ? 'bg-slate-800/95 hover:bg-slate-700 text-white border-white/15'
-                  : 'bg-white/95 hover:bg-white text-slate-800 border-slate-200/90'
+                : ''
             }`}
             title={
               isProtocolMode && hasPrevProduct
@@ -861,11 +858,11 @@ export default function PresentationMode({
             </div>
           </button>
 
-          {/* 2. CENTER SECTION: STEP CHIPS, SLIDE DOTS, 3D BIO/MOA, OMNI-MATRIX, AND TOOLS */}
+          {/* 2. CENTER SECTION: STEP CHIPS, SLIDE DOTS, OMNI-MATRIX, AND TOOLS */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 overflow-x-auto no-scrollbar">
             {/* Protocol Step Chips (Instant 1-Tap Navigation across all steps in the protocol) */}
             {isProtocolMode && (
-              <div className="flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-white/10">
+              <div className="flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-inner">
                 {protocolProducts.map((p, idx) => {
                   const isCurrentStep = idx === currentProductInProtocolIndex;
                   const isDone = idx < currentProductInProtocolIndex;
@@ -876,12 +873,12 @@ export default function PresentationMode({
                         e.stopPropagation();
                         switchToProtocolProduct(idx, 0);
                       }}
-                      className={`min-h-[44px] px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+                      className={`min-h-[44px] px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap ${
                         isCurrentStep
-                          ? 'bg-[#0B431E] text-white shadow-md ring-2 ring-emerald-400'
+                          ? 'ui-3d-pill-active ring-2 ring-emerald-400'
                           : isDone
-                            ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-200'
-                            : 'bg-white/90 text-slate-700 hover:bg-white'
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200 hover:bg-emerald-200'
+                            : 'ui-3d-btn-secondary text-slate-700'
                       }`}
                       title={`Jump directly to Step ${idx + 1}: ${p.name}`}
                     >
@@ -898,7 +895,7 @@ export default function PresentationMode({
             )}
 
             {/* Slide Progress Dots (Within Current Product) */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100/70 dark:bg-slate-800/70 rounded-xl">
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100/70 dark:bg-slate-800/70 rounded-xl border border-slate-200/60 shadow-inner">
               <span className="text-[10px] font-mono font-bold text-slate-500 mr-1 whitespace-nowrap">
                 {currentSlideIndex + 1}/{slides.length}
               </span>
@@ -911,7 +908,7 @@ export default function PresentationMode({
                   }}
                   className={`h-2 transition-all rounded-full ${
                     idx === currentSlideIndex
-                      ? 'w-4 bg-[#0B431E] ring-1 ring-emerald-400'
+                      ? 'w-4 bg-[#0B431E] ring-1 ring-emerald-400 shadow-sm'
                       : idx < currentSlideIndex
                         ? 'w-2 bg-emerald-600'
                         : 'w-1.5 bg-slate-300 dark:bg-slate-600'
@@ -921,48 +918,33 @@ export default function PresentationMode({
               ))}
             </div>
 
-            {/* 🧊 3D Bio/MOA Interactive Simulation Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onOpen3D) onOpen3D(product);
-              }}
-              className="min-h-[48px] px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white text-xs font-black shadow-md flex items-center gap-2 active:scale-95 transition-all whitespace-nowrap border border-teal-400/40"
-              title="Open 360° Real-Time 3D Biological & Molecular Simulation Studio"
-            >
-              <Box className="w-4 h-4 text-emerald-200 flex-shrink-0 animate-pulse" />
-              <span className="leading-tight">3D Bio/MOA</span>
-            </button>
-
-            {/* ⚡ 1.5s Omni-Matrix Button */}
+            {/* ⚡ 1.5s Omni-Matrix Button (3D Amber Physical Button) */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveDrawer('matrix');
               }}
-              className="min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 whitespace-nowrap border border-amber-300"
+              className="min-h-[48px] px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl ui-3d-btn-amber text-xs font-black flex items-center gap-1.5 whitespace-nowrap"
               title="1.5s Omni-Matrix (Jump to any of 16 products)"
             >
               <Zap className="w-4 h-4 text-slate-950 fill-current flex-shrink-0" />
-              <span className="hidden xl:inline">Omni-Matrix</span>
+              <span>Omni-Matrix (16)</span>
             </button>
 
-            {/* Clinical Evidence Drawer Button */}
+            {/* Clinical Evidence Drawer Button (3D Tactile Button) */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveDrawer((prev) => prev === 'references' ? null : 'references');
               }}
-              className={`min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl border text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all whitespace-nowrap ${
+              className={`min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl text-xs font-black flex items-center gap-1.5 whitespace-nowrap ${
                 activeDrawer === 'references'
-                  ? 'bg-purple-600 text-white border-purple-400 shadow-md'
-                  : isDarkMode
-                    ? 'bg-slate-800/90 text-purple-300 border-white/10 hover:bg-slate-700'
-                    : 'bg-white text-[#0B431E] border-slate-200 hover:bg-purple-50'
+                  ? 'bg-purple-600 text-white border-purple-400 shadow-md ring-2 ring-purple-300'
+                  : 'ui-3d-btn-secondary text-[#0B431E]'
               }`}
               title="Published Clinical Studies & Trials"
             >
-              <BookOpen className="w-4 h-4 text-purple-500 flex-shrink-0" />
+              <BookOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
               <span className="hidden xl:inline">Evidence</span>
             </button>
 
@@ -972,12 +954,10 @@ export default function PresentationMode({
                 e.stopPropagation();
                 setShowToolbars((prev) => !prev);
               }}
-              className={`min-h-[48px] px-3 py-2 rounded-xl sm:rounded-2xl text-xs font-bold border transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+              className={`min-h-[48px] px-3 py-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 showToolbars
-                  ? 'bg-[#0B431E] text-white border-[#0B431E]'
-                  : isDarkMode
-                    ? 'bg-slate-800 text-slate-300 border-white/10'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  ? 'ui-3d-btn-primary'
+                  : 'ui-3d-btn-secondary text-slate-700'
               }`}
               title="Toggle Top Controls (Laser, Spotlight, Zoom, Timer)"
             >
@@ -986,7 +966,7 @@ export default function PresentationMode({
             </button>
           </div>
 
-          {/* 3. RIGHT THUMB: NEXT STEP / NEXT SLIDE / COMPLETE */}
+          {/* 3. RIGHT THUMB: NEXT STEP / NEXT SLIDE / COMPLETE (3D PRIMARY BUTTON) */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -999,11 +979,7 @@ export default function PresentationMode({
                 setTimeout(() => setProtocolToast(null), 3500);
               }
             }}
-            className={`min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border flex items-center gap-2 transition-all active:scale-95 shadow-md text-right flex-shrink-0 ${
-              (!hasNextProduct && currentSlideIndex === slides.length - 1 && !isProtocolMode)
-                ? 'bg-emerald-600 text-white border-emerald-400 opacity-90'
-                : 'bg-[#0B431E] hover:bg-[#14632E] text-white border-emerald-400/40'
-            }`}
+            className="min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 text-right flex-shrink-0 ui-3d-btn-primary"
             title={
               isProtocolMode && hasNextProduct
                 ? `Next Step: ${nextProduct?.shortName || nextProduct?.name}`
