@@ -98,9 +98,59 @@ body.presentation-lock {
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 12px 4px rgba(239, 68, 68, 0.8), 0 0 24px 8px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 12px 3px rgba(239, 68, 68, 0.8), 0 0 20px 6px rgba(239, 68, 68, 0.4);
   z-index: 60;
-  transition: transform 0.04s ease-out;
+  transition: transform 0.05s ease-out;
+}
+
+/* 3D Visualized Perspective & Flip Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.card-3d-elevate {
+  transform: translateZ(20px);
+}
+
+.card-3d-elevate-high {
+  transform: translateZ(36px);
+}
+
+/* Tablet & iPad Touch Optimizations */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a, input, select {
+  touch-action: manipulation;
+}
+
+.touch-haptic:active {
+  transform: scale(0.96);
+  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 3D Pedestal Lighting Reflection */
+.pedestal-glow {
+  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.25) 0%, rgba(11, 67, 30, 0.08) 50%, transparent 75%);
 }
 
 /* Spotlight Dimmer Overlay */

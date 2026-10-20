@@ -7,6 +7,7 @@ import PresentationMode from './components/PresentationMode.jsx';
 import QuickJumpMatrix from './components/QuickJumpMatrix.jsx';
 import CallLogsModal from './components/CallLogsModal.jsx';
 import PlaylistDrawer from './components/PlaylistDrawer.jsx';
+import ThreeDViewer from './components/ThreeDViewer.jsx';
 import ConceptorsLogo from './components/ConceptorsLogo.jsx';
 import { enterFullscreenLandscape } from './utils/screenUtils.js';
 import { 
@@ -69,6 +70,7 @@ export default function App() {
   
   // Presentation & Playlist
   const [activePresentationProduct, setActivePresentationProduct] = useState(null);
+  const [active3DProduct, setActive3DProduct] = useState(null);
   const [activeProtocol, setActiveProtocol] = useState(null);
   const [callPlaylist, setCallPlaylist] = useState([]);
   const [isPlaylistDrawerOpen, setIsPlaylistDrawerOpen] = useState(false);
@@ -524,6 +526,7 @@ export default function App() {
                   const target = allProductsMap[relatedId];
                   if (target) setActivePresentationProduct(target);
                 }}
+                onOpen3D={(p) => setActive3DProduct(p)}
               />
             ))}
           </div>
@@ -571,6 +574,15 @@ export default function App() {
           onLaunchProtocolFlow={handleLaunchFlow}
           onOpenQuickJump={() => setIsQuickJumpOpen(true)}
           onRecordSlideView={handleRecordSlideView}
+          onOpen3D={(p) => setActive3DProduct(p)}
+        />
+      )}
+
+      {/* 7B. 3D BIOLOGICAL & MOLECULAR SIMULATION STUDIO */}
+      {active3DProduct && (
+        <ThreeDViewer
+          product={active3DProduct}
+          onClose={() => setActive3DProduct(null)}
         />
       )}
 

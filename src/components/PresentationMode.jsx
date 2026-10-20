@@ -19,7 +19,9 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-  Sparkles
+  Sparkles,
+  Box,
+  Layers
 } from 'lucide-react';
 import ConceptorsLogo from './ConceptorsLogo.jsx';
 import { clinicalDatabase } from '../data/clinicalData.js';
@@ -35,10 +37,11 @@ export default function PresentationMode({
   onLaunchProtocolFlow,
   onOpenQuickJump,
   onRecordSlideView,
+  onOpen3D,
 }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   
-  // Default to Clean Doctor Focus Mode: toolbars hidden on launch so the slide is 100% visible & huge
+  // Default to Clean Doctor Focus Mode: top toolbar hidden on launch so the slide is 100% visible & huge
   const [showToolbars, setShowToolbars] = useState(false);
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
   const [isLaserActive, setIsLaserActive] = useState(false);
@@ -68,6 +71,9 @@ export default function PresentationMode({
   const touchStartRef = useRef({ x: 0, y: 0, time: 0 });
   const isSwipingRef = useRef(false);
   const lastTouchTimeRef = useRef(0);
+  const pinchStartDistRef = useRef(0);
+  const initialZoomRef = useRef(1);
+  const lastTapTimeRef = useRef(0);
 
   const slides = product?.slides || [];
   const currentSlideUrl = slides[currentSlideIndex] || '';
@@ -314,10 +320,22 @@ export default function PresentationMode({
   };
 
   // =========================================================================
-  // TOUCH SWIPE HANDLERS (CRUCIAL: SWIPING IS 100% SILENT & NEVER RE-OPENS TOOLBARS)
+  // TOUCH SWIPE & PINCH HANDLERS (TABLET / IPAD TOUCH OPTIMIZED)
   // =========================================================================
   const handleTouchStart = (e) => {
     isSwipingRef.current = false;
+    // 1. Two-Finger Pinch Zoom on iPad/Tablets
+    if (e.touches && e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      pinchStartDistRef.current = dist;
+      initialZoomRef.current = zoomLevel;
+      return;
+    }
+
+    // 2. Single Touch Start
     if (e.touches && e.touches[0]) {
       touchStartRef.current = {
         x: e.touches[0].clientX,
@@ -332,6 +350,19 @@ export default function PresentationMode({
   };
 
   const handleTouchMove = (e) => {
+    // 1. Pinch Zoom Processing
+    if (e.touches && e.touches.length === 2 && pinchStartDistRef.current > 0) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const factor = dist / pinchStartDistRef.current;
+      const newZoom = Math.min(3, Math.max(1, initialZoomRef.current * factor));
+      setZoomLevel(newZoom);
+      return;
+    }
+
+    // 2. Single Finger Move
     if (e.touches && e.touches[0]) {
       const diffX = e.touches[0].clientX - touchStartRef.current.x;
       const diffY = e.touches[0].clientY - touchStartRef.current.y;
@@ -344,8 +375,8 @@ export default function PresentationMode({
         const dx = e.touches[0].clientX - dragStartRef.current.x;
         const dy = e.touches[0].clientY - dragStartRef.current.y;
         setPanPosition((prev) => ({
-          x: prev.x + dx * 0.8,
-          y: prev.y + dy * 0.8,
+          x: Math.max(-400, Math.min(400, prev.x + dx * 0.8)),
+          y: Math.max(-300, Math.min(300, prev.y + dy * 0.8)),
         }));
         dragStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
@@ -353,6 +384,16 @@ export default function PresentationMode({
   };
 
   const handleTouchEnd = (e) => {
+    // Release pinch
+    if (pinchStartDistRef.current > 0) {
+      pinchStartDistRef.current = 0;
+      if (zoomLevel < 1.15) {
+        setZoomLevel(1);
+        setPanPosition({ x: 0, y: 0 });
+      }
+      return;
+    }
+
     if (zoomLevel > 1) {
       isDraggingRef.current = false;
       return;
@@ -362,7 +403,8 @@ export default function PresentationMode({
     const diffX = e.changedTouches[0].clientX - touchStartRef.current.x;
     const diffY = e.changedTouches[0].clientY - touchStartRef.current.y;
     const elapsedTime = Date.now() - touchStartRef.current.time;
-    lastTouchTimeRef.current = Date.now();
+    const now = Date.now();
+    lastTouchTimeRef.current = now;
 
     // Horizontal swipe: diffX > 35px (CLEAN SILENT SLIDE TRANSITION, TOOLBARS STAY EXACTLY AS THEY ARE!)
     if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY) * 1.1 && elapsedTime < 800) {
@@ -372,11 +414,32 @@ export default function PresentationMode({
       } else {
         handlePrevSlideOrProduct();
       }
-    } else if (Math.abs(diffX) < 15 && Math.abs(diffY) < 15 && elapsedTime < 350) {
-      // Intentional stationary tap on the canvas toggles toolbars
+    } else if (Math.abs(diffX) < 18 && Math.abs(diffY) < 18 && elapsedTime < 320) {
+      // Stationary tap: check for double tap zoom on tablets!
       isSwipingRef.current = false;
-      if (!isLaserActive && !isSpotlightActive && zoomLevel === 1 && !activeDrawer) {
-        setShowToolbars((prev) => !prev);
+      if (now - lastTapTimeRef.current < 320) {
+        // Double Tap Zoom!
+        if (zoomLevel === 1) {
+          setZoomLevel(2);
+          const tapX = touchStartRef.current.x;
+          const tapY = touchStartRef.current.y;
+          const cx = window.innerWidth / 2;
+          const cy = window.innerHeight / 2;
+          setPanPosition({
+            x: Math.max(-250, Math.min(250, (cx - tapX) * 0.8)),
+            y: Math.max(-200, Math.min(200, (cy - tapY) * 0.8)),
+          });
+        } else {
+          setZoomLevel(1);
+          setPanPosition({ x: 0, y: 0 });
+        }
+        lastTapTimeRef.current = 0;
+      } else {
+        lastTapTimeRef.current = now;
+        // Single tap toggles the top header toolbar
+        if (!isLaserActive && !isSpotlightActive && zoomLevel === 1 && !activeDrawer) {
+          setShowToolbars((prev) => !prev);
+        }
       }
     }
   };
@@ -656,7 +719,7 @@ export default function PresentationMode({
       {/* 2. MAIN PRESENTATION VIEWPORT (Full Screen Zero-Scroll Canvas)            */}
       {/* ========================================================================= */}
       <div 
-        className="relative flex-1 flex items-center justify-center w-full h-full min-h-[100dvh] overflow-hidden select-none"
+        className="relative flex-1 flex items-center justify-center w-full h-full min-h-[100dvh] overflow-hidden select-none pb-20 pt-2"
         onClick={(e) => {
           // Suppress synthetic clicks that immediately follow touch swipe or stationary tap
           if (Date.now() - lastTouchTimeRef.current < 450) {
@@ -681,7 +744,7 @@ export default function PresentationMode({
             <img
               src={currentSlideUrl}
               alt={`${product?.name} Slide ${currentSlideIndex + 1}`}
-              className="max-h-[98dvh] max-w-[99vw] w-auto h-auto object-contain rounded-2xl border border-slate-900/10 shadow-2xl transition-all duration-200"
+              className="max-h-[85dvh] max-w-[96vw] w-auto h-auto object-contain rounded-2xl border border-slate-900/10 shadow-2xl transition-all duration-200"
               draggable={false}
             />
           </div>
@@ -722,13 +785,13 @@ export default function PresentationMode({
               ? `Previous in Protocol: ${prevProduct?.shortName || prevProduct?.name}`
               : 'Previous Slide (Swipe Right / Left Arrow)'
           }
-          className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full border transition-all flex items-center justify-center active:scale-95 shadow-md ${
+          className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full border transition-all flex items-center justify-center active:scale-90 shadow-md ${
             currentSlideIndex === 0 && !hasPrevProduct
               ? 'opacity-0 pointer-events-none' 
-              : 'opacity-30 hover:opacity-90 bg-white/80 hover:bg-white text-slate-800'
+              : 'opacity-40 hover:opacity-95 bg-white/90 hover:bg-white text-slate-800'
           }`}
         >
-          <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
+          <ChevronLeft className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.5]" />
         </button>
 
         <button
@@ -742,125 +805,234 @@ export default function PresentationMode({
               ? `Next in Protocol: Step ${currentProductInProtocolIndex + 2} (${nextProduct?.shortName || nextProduct?.name})`
               : 'Next Slide (Swipe Left / Right Arrow)'
           }
-          className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full border transition-all flex items-center justify-center active:scale-95 shadow-md ${
+          className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full border transition-all flex items-center justify-center active:scale-90 shadow-md ${
             currentSlideIndex === slides.length - 1 && !hasNextProduct && !isProtocolMode
               ? 'opacity-0 pointer-events-none' 
-              : 'opacity-30 hover:opacity-90 bg-white/80 hover:bg-white text-slate-800'
+              : 'opacity-40 hover:opacity-95 bg-white/90 hover:bg-white text-slate-800'
           }`}
         >
-          <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
+          <ChevronRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.5]" />
         </button>
       </div>
 
       {/* ========================================================================= */}
-      {/* DISCREET FLOATING PILL WHEN TOOLBARS ARE HIDDEN (DOCTOR FOCUS MODE)       */}
+      {/* 3. ALWAYS-AVAILABLE FLOATING STEP DOCK (TABLET & IPAD THUMB ZONE)         */}
       {/* ========================================================================= */}
-      {!showToolbars && !activeDrawer && (
-        <div className="absolute bottom-3 right-3 z-40 animate-in fade-in duration-300">
+      <div className="absolute bottom-3 sm:bottom-4 inset-x-0 z-40 px-2 sm:px-4 flex justify-center pointer-events-none select-none">
+        <div className={`pointer-events-auto p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl border backdrop-blur-2xl shadow-2xl flex items-center justify-between gap-2 max-w-full overflow-x-auto no-scrollbar ${
+          isDarkMode 
+            ? 'bg-slate-900/95 border-white/15 text-white' 
+            : 'bg-white/95 border-slate-200/90 text-slate-900'
+        }`}>
+          {/* 1. LEFT THUMB: PREVIOUS STEP / PREVIOUS SLIDE */}
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setShowToolbars(true);
-              resetInactivityTimer();
+              if (isProtocolMode && hasPrevProduct) {
+                returnToPrevProductInProtocol();
+              } else if (currentSlideIndex > 0) {
+                goToSlide(currentSlideIndex - 1);
+              }
             }}
-            className="px-3 py-1.5 rounded-full bg-slate-900/40 hover:bg-slate-900/80 text-white/80 hover:text-white backdrop-blur-md border border-white/10 text-[11px] font-bold shadow-md flex items-center gap-1.5 transition-all active:scale-95"
-            title="Open Presentation Controls (or tap slide canvas / press H)"
+            disabled={!hasPrevProduct && currentSlideIndex === 0}
+            className={`min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border flex items-center gap-2 transition-all active:scale-95 shadow-sm text-left flex-shrink-0 ${
+              !hasPrevProduct && currentSlideIndex === 0
+                ? 'opacity-30 border-transparent text-slate-400 cursor-not-allowed pointer-events-none'
+                : isDarkMode
+                  ? 'bg-slate-800/95 hover:bg-slate-700 text-white border-white/15'
+                  : 'bg-white/95 hover:bg-white text-slate-800 border-slate-200/90'
+            }`}
+            title={
+              isProtocolMode && hasPrevProduct
+                ? `Previous Step: ${prevProduct?.shortName || prevProduct?.name}`
+                : 'Previous Slide (Swipe Right)'
+            }
           >
-            <Eye className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Controls</span>
-          </button>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 3. THUMB-ZONE FLOATING HUD (Sleek Single-Row Minimal Control Dock)        */}
-      {/* ========================================================================= */}
-      <div
-        className={`absolute bottom-3 inset-x-0 z-40 transition-all duration-300 pointer-events-auto px-4 flex justify-center ${
-          showToolbars
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-6 pointer-events-none'
-        }`}
-      >
-        <div className={`p-2 rounded-2xl border backdrop-blur-xl shadow-2xl flex items-center gap-3 ${
-          isDarkMode ? 'glass-hud-dark' : 'glass-hud'
-        }`}>
-          {/* 1. 1.5s Omni-Matrix Button */}
-          <button
-            onClick={() => setActiveDrawer('matrix')}
-            className="min-h-[40px] px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-300 shadow-sm active:scale-95"
-            title="1.5s Omni-Matrix (Jump to any of 16 products)"
-          >
-            <Zap className="w-4 h-4 text-slate-950 fill-current" />
-            <span>Omni-Matrix (16)</span>
-          </button>
-
-          <span className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 mx-0.5" />
-
-          {/* 2. Slide Progress Indicator & Dots */}
-          <div className="flex items-center gap-2.5 px-2">
-            <span className="text-[11px] font-mono font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
-              Slide {currentSlideIndex + 1}/{slides.length}
-            </span>
-
-            {/* Interactive Progress Dots */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-              {slides.map((_, idx) => {
-                const isActive = idx === currentSlideIndex;
-                const isVisited = idx < currentSlideIndex;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => goToSlide(idx)}
-                    title={getSlideStepLabel(idx, slides.length)}
-                    className={`group relative flex items-center justify-center transition-all duration-200 ${
-                      isActive ? 'scale-125' : 'hover:scale-110'
-                    }`}
-                  >
-                    <span
-                      className={`block rounded-full transition-all ${
-                        isActive
-                          ? 'w-4 h-2 bg-[#0B431E] ring-2 ring-[#0B431E]/30'
-                          : isVisited
-                            ? 'w-2 h-2 bg-emerald-600'
-                            : 'w-1.5 h-1.5 bg-slate-300 dark:bg-slate-600'
-                      }`}
-                    />
-                    <span className="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap text-[10px] font-bold px-2 py-1 rounded bg-slate-900 text-white shadow-lg pointer-events-none z-50">
-                      {getSlideStepLabel(idx, slides.length)}
-                    </span>
-                  </button>
-                );
-              })}
+            <ChevronLeft className="w-5 h-5 flex-shrink-0 text-[#0B431E] dark:text-emerald-400 stroke-[2.5]" />
+            <div className="flex flex-col">
+              <span className="text-[11px] sm:text-xs font-black leading-tight text-slate-900 dark:text-white">
+                {isProtocolMode ? 'Prev Step' : 'Prev Slide'}
+              </span>
+              <span className="text-[9px] sm:text-[10px] text-slate-500 font-bold truncate max-w-[80px] sm:max-w-[110px] leading-tight">
+                {isProtocolMode && hasPrevProduct
+                  ? `Step ${currentProductInProtocolIndex}: ${prevProduct?.shortName || prevProduct?.name}`
+                  : `Slide ${Math.max(1, currentSlideIndex)}/${slides.length}`}
+              </span>
             </div>
+          </button>
+
+          {/* 2. CENTER SECTION: STEP CHIPS, SLIDE DOTS, 3D BIO/MOA, OMNI-MATRIX, AND TOOLS */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 overflow-x-auto no-scrollbar">
+            {/* Protocol Step Chips (Instant 1-Tap Navigation across all steps in the protocol) */}
+            {isProtocolMode && (
+              <div className="flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-white/10">
+                {protocolProducts.map((p, idx) => {
+                  const isCurrentStep = idx === currentProductInProtocolIndex;
+                  const isDone = idx < currentProductInProtocolIndex;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        switchToProtocolProduct(idx, 0);
+                      }}
+                      className={`min-h-[44px] px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+                        isCurrentStep
+                          ? 'bg-[#0B431E] text-white shadow-md ring-2 ring-emerald-400'
+                          : isDone
+                            ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-200'
+                            : 'bg-white/90 text-slate-700 hover:bg-white'
+                      }`}
+                      title={`Jump directly to Step ${idx + 1}: ${p.name}`}
+                    >
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${
+                        isCurrentStep ? 'bg-white text-[#0B431E]' : isDone ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                      }`}>
+                        {isDone ? '✓' : idx + 1}
+                      </span>
+                      <span className="truncate max-w-[70px] sm:max-w-[110px]">{p.shortName || p.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Slide Progress Dots (Within Current Product) */}
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100/70 dark:bg-slate-800/70 rounded-xl">
+              <span className="text-[10px] font-mono font-bold text-slate-500 mr-1 whitespace-nowrap">
+                {currentSlideIndex + 1}/{slides.length}
+              </span>
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToSlide(idx);
+                  }}
+                  className={`h-2 transition-all rounded-full ${
+                    idx === currentSlideIndex
+                      ? 'w-4 bg-[#0B431E] ring-1 ring-emerald-400'
+                      : idx < currentSlideIndex
+                        ? 'w-2 bg-emerald-600'
+                        : 'w-1.5 bg-slate-300 dark:bg-slate-600'
+                  }`}
+                  title={getSlideStepLabel(idx, slides.length)}
+                />
+              ))}
+            </div>
+
+            {/* 🧊 3D Bio/MOA Interactive Simulation Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onOpen3D) onOpen3D(product);
+              }}
+              className="min-h-[48px] px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white text-xs font-black shadow-md flex items-center gap-2 active:scale-95 transition-all whitespace-nowrap border border-teal-400/40"
+              title="Open 360° Real-Time 3D Biological & Molecular Simulation Studio"
+            >
+              <Box className="w-4 h-4 text-emerald-200 flex-shrink-0 animate-pulse" />
+              <span className="leading-tight">3D Bio/MOA</span>
+            </button>
+
+            {/* ⚡ 1.5s Omni-Matrix Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveDrawer('matrix');
+              }}
+              className="min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 whitespace-nowrap border border-amber-300"
+              title="1.5s Omni-Matrix (Jump to any of 16 products)"
+            >
+              <Zap className="w-4 h-4 text-slate-950 fill-current flex-shrink-0" />
+              <span className="hidden xl:inline">Omni-Matrix</span>
+            </button>
+
+            {/* Clinical Evidence Drawer Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveDrawer((prev) => prev === 'references' ? null : 'references');
+              }}
+              className={`min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl border text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all whitespace-nowrap ${
+                activeDrawer === 'references'
+                  ? 'bg-purple-600 text-white border-purple-400 shadow-md'
+                  : isDarkMode
+                    ? 'bg-slate-800/90 text-purple-300 border-white/10 hover:bg-slate-700'
+                    : 'bg-white text-[#0B431E] border-slate-200 hover:bg-purple-50'
+              }`}
+              title="Published Clinical Studies & Trials"
+            >
+              <BookOpen className="w-4 h-4 text-purple-500 flex-shrink-0" />
+              <span className="hidden xl:inline">Evidence</span>
+            </button>
+
+            {/* Toggle Full Top Toolbar (Doctor Focus / Tools) */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowToolbars((prev) => !prev);
+              }}
+              className={`min-h-[48px] px-3 py-2 rounded-xl sm:rounded-2xl text-xs font-bold border transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+                showToolbars
+                  ? 'bg-[#0B431E] text-white border-[#0B431E]'
+                  : isDarkMode
+                    ? 'bg-slate-800 text-slate-300 border-white/10'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+              }`}
+              title="Toggle Top Controls (Laser, Spotlight, Zoom, Timer)"
+            >
+              {showToolbars ? <EyeOff className="w-4 h-4 text-emerald-300" /> : <Eye className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
+              <span className="hidden 2xl:inline">{showToolbars ? 'Hide Top Tools' : 'Top Tools'}</span>
+            </button>
           </div>
 
-          <span className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 mx-0.5" />
-
-          {/* 3. Clinical References & Studies Button */}
+          {/* 3. RIGHT THUMB: NEXT STEP / NEXT SLIDE / COMPLETE */}
           <button
-            onClick={() => setActiveDrawer((prev) => prev === 'references' ? null : 'references')}
-            className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border shadow-sm active:scale-95 ${
-              activeDrawer === 'references'
-                ? 'bg-[#0B431E] text-white border-[#0B431E]'
-                : isDarkMode
-                  ? 'bg-slate-900/90 hover:bg-slate-800 text-purple-300 border-purple-500/30'
-                  : 'bg-white hover:bg-purple-50 text-[#0B431E] border-slate-200'
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isProtocolMode && hasNextProduct) {
+                advanceToNextProductInProtocol();
+              } else if (currentSlideIndex < slides.length - 1) {
+                goToSlide(currentSlideIndex + 1);
+              } else if (isProtocolMode) {
+                setProtocolToast('Protocol Detail Complete! All protocol therapies reviewed.');
+                setTimeout(() => setProtocolToast(null), 3500);
+              }
+            }}
+            className={`min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border flex items-center gap-2 transition-all active:scale-95 shadow-md text-right flex-shrink-0 ${
+              (!hasNextProduct && currentSlideIndex === slides.length - 1 && !isProtocolMode)
+                ? 'bg-emerald-600 text-white border-emerald-400 opacity-90'
+                : 'bg-[#0B431E] hover:bg-[#14632E] text-white border-emerald-400/40'
             }`}
-            title="Published Clinical Studies & Evidence"
+            title={
+              isProtocolMode && hasNextProduct
+                ? `Next Step: ${nextProduct?.shortName || nextProduct?.name}`
+                : currentSlideIndex < slides.length - 1
+                  ? 'Next Slide (Swipe Left)'
+                  : 'Protocol Detailing Complete'
+            }
           >
-            <BookOpen className="w-4 h-4 text-purple-500" />
-            <span className="hidden sm:inline">Evidence</span>
-          </button>
-
-          {/* 4. Hide Controls (Doctor Focus) */}
-          <button
-            onClick={() => setShowToolbars(false)}
-            className="min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-black bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center gap-1.5 shadow-sm active:scale-95"
-            title="Hide controls for doctor concentration"
-          >
-            <EyeOff className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Doctor Focus</span>
+            <div className="flex flex-col items-end">
+              <span className="text-[11px] sm:text-xs font-black leading-tight text-white">
+                {isProtocolMode && hasNextProduct
+                  ? 'Next Step'
+                  : currentSlideIndex < slides.length - 1
+                    ? 'Next Slide'
+                    : 'Complete ✓'}
+              </span>
+              <span className="text-[9px] sm:text-[10px] text-emerald-200 font-bold truncate max-w-[80px] sm:max-w-[110px] leading-tight">
+                {isProtocolMode && hasNextProduct
+                  ? `Step ${currentProductInProtocolIndex + 2}: ${nextProduct?.shortName || nextProduct?.name}`
+                  : currentSlideIndex < slides.length - 1
+                    ? `Slide ${currentSlideIndex + 2}/${slides.length}`
+                    : 'All Reviewed'}
+              </span>
+            </div>
+            {(!hasNextProduct && currentSlideIndex === slides.length - 1) ? (
+              <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-white stroke-[2.5]" />
+            ) : (
+              <ChevronRight className="w-5 h-5 flex-shrink-0 text-white stroke-[2.5]" />
+            )}
           </button>
         </div>
       </div>
