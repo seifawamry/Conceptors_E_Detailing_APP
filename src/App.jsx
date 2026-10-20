@@ -68,6 +68,7 @@ export default function App() {
   
   // Presentation & Playlist
   const [activePresentationProduct, setActivePresentationProduct] = useState(null);
+  const [activeProtocol, setActiveProtocol] = useState(null);
   const [callPlaylist, setCallPlaylist] = useState([]);
   const [isPlaylistDrawerOpen, setIsPlaylistDrawerOpen] = useState(false);
   const [isQuickJumpOpen, setIsQuickJumpOpen] = useState(false);
@@ -132,9 +133,56 @@ export default function App() {
     setIsPlaylistDrawerOpen(true);
   };
 
+  const launchTopTierCallNow = () => {
+    setCallPlaylist([...topTierProducts]);
+    const protocolObj = {
+      id: 'top-tier-core-focus',
+      title: '⭐ Top-Tier Core Focus Call (10 Products)',
+      tagline: 'Flagship Veterinary Therapeutics & Diagnostics Across 3 Partner Portfolios',
+      badge: 'Core Focus',
+      accent: '#0B431E',
+      category: 'Flagship Core Focus',
+      clinicalRationale: 'Evidence-based multi-product detailing protocol covering Catalysis, B.A.R.D, and Vitasignia flagships.',
+      steps: topTierProducts.map((p, idx) => ({
+        step: idx + 1,
+        role: p.specialty || 'Therapy',
+        productId: p.id,
+        label: p.shortName || p.name,
+      })),
+      productIds: topTierProducts.map((p) => p.id),
+      products: topTierProducts,
+      currentProductIndex: 0,
+    };
+    setActiveProtocol(protocolObj);
+    setActivePresentationProduct(topTierProducts[0]);
+  };
+
   const startPlaylistCall = () => {
     if (callPlaylist.length > 0) {
+      const isTopTierCall = callPlaylist.length === 10 && callPlaylist.every((p) => p.isTopTier);
+      const protocolObj = {
+        id: isTopTierCall ? 'top-tier-core-focus' : 'custom-playlist',
+        title: isTopTierCall ? '⭐ Top-Tier Core Focus Call (10 Products)' : 'Custom Call Playlist',
+        tagline: isTopTierCall ? 'Evidence-Based Flagship Detail Journey' : `${callPlaylist.length} Prescribing Protocols`,
+        badge: isTopTierCall ? 'Core Focus' : 'Playlist',
+        accent: '#0B431E',
+        category: 'Custom Clinical Playlist',
+        clinicalRationale: isTopTierCall
+          ? 'Comprehensive medical detailing of all 10 core focus flagship therapies across Catalysis, B.A.R.D, and Vitasignia.'
+          : 'Curated custom presentation playlist for targeted veterinary clinical consultation.',
+        steps: callPlaylist.map((p, idx) => ({
+          step: idx + 1,
+          role: p.specialty || 'Therapy',
+          productId: p.id,
+          label: p.shortName || p.name,
+        })),
+        productIds: callPlaylist.map((p) => p.id),
+        products: callPlaylist,
+        currentProductIndex: 0,
+      };
+      setActiveProtocol(protocolObj);
       setActivePresentationProduct(callPlaylist[0]);
+      setIsPlaylistDrawerOpen(false);
     }
   };
 
@@ -145,6 +193,26 @@ export default function App() {
       .filter(Boolean);
 
     if (flowProducts.length > 0) {
+      const protocolObj = {
+        id: flow.id,
+        title: flow.title,
+        tagline: flow.tagline,
+        category: flow.category,
+        badge: flow.badge || 'Protocol',
+        accent: flow.accent || '#0B431E',
+        clinicalRationale: flow.clinicalRationale,
+        targetIndications: flow.targetIndications,
+        steps: flow.steps || flowProducts.map((p, idx) => ({
+          step: idx + 1,
+          role: 'Therapy',
+          productId: p.id,
+          label: p.shortName || p.name
+        })),
+        productIds: flow.productIds,
+        products: flowProducts,
+        currentProductIndex: 0,
+      };
+      setActiveProtocol(protocolObj);
       setCallPlaylist(flowProducts);
       setActivePresentationProduct(flowProducts[0]);
     }
@@ -246,11 +314,19 @@ export default function App() {
             {/* 1-Tap Call Actions */}
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <button
-                onClick={loadTopTierCall}
+                onClick={launchTopTierCallNow}
                 className="flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-[#0B431E] hover:bg-[#14632E] transition-all shadow-sm active:scale-[0.98]"
               >
                 <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
-                <span>⭐ 1-Tap Load Top-Tier Call (10 Products)</span>
+                <span>⭐ 1-Tap Launch Top-Tier Call (10 Products)</span>
+              </button>
+
+              <button
+                onClick={loadTopTierCall}
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-[#0B431E] bg-[#E8F4EC] hover:bg-[#d5ecd9] border border-[#0B431E]/20 transition-all shadow-sm"
+              >
+                <Layers className="w-4 h-4 text-[#0B431E]" />
+                <span>Manage Playlist ({callPlaylist.length})</span>
               </button>
 
               <button
@@ -469,8 +545,19 @@ export default function App() {
         <PresentationMode
           product={activePresentationProduct}
           allProductsMap={allProductsMap}
-          onClose={() => setActivePresentationProduct(null)}
-          onSwitchProduct={(newProd) => setActivePresentationProduct(newProd)}
+          activeProtocol={activeProtocol}
+          allCallFlows={catalogData.callFlows}
+          onClose={() => {
+            setActivePresentationProduct(null);
+            setActiveProtocol(null);
+          }}
+          onSwitchProduct={(newProd, newProtocolIdx) => {
+            setActivePresentationProduct(newProd);
+            if (activeProtocol && typeof newProtocolIdx === 'number') {
+              setActiveProtocol((prev) => prev ? { ...prev, currentProductIndex: newProtocolIdx } : null);
+            }
+          }}
+          onLaunchProtocolFlow={handleLaunchFlow}
           onOpenQuickJump={() => setIsQuickJumpOpen(true)}
           onRecordSlideView={handleRecordSlideView}
         />
