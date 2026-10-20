@@ -532,22 +532,24 @@ export default function App() {
       </main>
 
       {/* 6. PERSISTENT GLOBAL "QUICK-JUMP" COMMAND MATRIX (THUMB ZONE) */}
-      <div className="fixed bottom-5 inset-x-0 z-40 flex items-center justify-center pointer-events-none">
-        <button
-          onClick={() => setIsQuickJumpOpen(true)}
-          className="pointer-events-auto group flex items-center gap-2.5 px-5 py-3 rounded-full bg-[#0B431E] hover:bg-[#14632E] border border-[#96916E]/40 text-white shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#96916E] flex items-center justify-center text-white font-black text-xs shadow-md">
-            <Zap className="w-3.5 h-3.5 fill-current" />
-          </div>
-          <span className="text-xs font-extrabold tracking-wide uppercase">
-            1.5s Omni-Matrix
-          </span>
-          <span className="text-[10px] text-white/90 font-mono bg-white/20 px-2 py-0.5 rounded-full border border-white/20 font-bold">
-            Thumb Zone
-          </span>
-        </button>
-      </div>
+      {!activePresentationProduct && (
+        <div className="fixed bottom-5 inset-x-0 z-40 flex items-center justify-center pointer-events-none">
+          <button
+            onClick={() => setIsQuickJumpOpen(true)}
+            className="pointer-events-auto group flex items-center gap-2.5 px-5 py-3 rounded-full bg-[#0B431E] hover:bg-[#14632E] border border-[#96916E]/40 text-white shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95"
+          >
+            <div className="w-6 h-6 rounded-full bg-[#96916E] flex items-center justify-center text-white font-black text-xs shadow-md">
+              <Zap className="w-3.5 h-3.5 fill-current" />
+            </div>
+            <span className="text-xs font-extrabold tracking-wide uppercase">
+              1.5s Omni-Matrix
+            </span>
+            <span className="text-[10px] text-white/90 font-mono bg-white/20 px-2 py-0.5 rounded-full border border-white/20 font-bold">
+              Thumb Zone
+            </span>
+          </button>
+        </div>
+      )}
 
       {/* 7. CINEMA SHOWROOM PRESENTATION MODE */}
       {activePresentationProduct && (
