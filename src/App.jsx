@@ -7,6 +7,7 @@ import PresentationMode from './components/PresentationMode.jsx';
 import QuickJumpMatrix from './components/QuickJumpMatrix.jsx';
 import CallLogsModal from './components/CallLogsModal.jsx';
 import PlaylistDrawer from './components/PlaylistDrawer.jsx';
+import ConceptorsLogo from './components/ConceptorsLogo.jsx';
 import { 
   Star, 
   Search, 
@@ -227,9 +228,12 @@ export default function App() {
         {/* HERO BANNER & 1-TAP CALL BUILDER (Vet-Concept Clinical Aesthetic) */}
         <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-white via-[#FAF9F5] to-[#E8F4EC] mb-8 overflow-hidden border border-slate-200/90 shadow-sm">
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-extrabold uppercase tracking-wider mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Veterinary Omni-Detailing System</span>
+            <div className="flex items-center gap-3 flex-wrap mb-4">
+              <ConceptorsLogo className="h-10 sm:h-12" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F4EC] border border-[#0B431E]/20 text-[#0B431E] text-xs font-extrabold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Veterinary Omni-Detailing System</span>
+              </div>
             </div>
             
             <h2 className="text-2xl sm:text-4xl font-black text-[#0B431E] tracking-tight leading-tight">

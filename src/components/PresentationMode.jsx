@@ -20,6 +20,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
+import ConceptorsLogo from './ConceptorsLogo.jsx';
 
 export default function PresentationMode({
   product,
@@ -325,6 +326,8 @@ export default function PresentationMode({
             <X className="w-4 h-4 text-slate-500" />
             <span className="hidden sm:inline">Exit Presentation</span>
           </button>
+
+          <ConceptorsLogo className="h-8 hidden lg:block" light={isDarkMode} />
 
           <div className={`min-h-[44px] px-3.5 py-2 rounded-xl border backdrop-blur-md flex items-center gap-2.5 shadow-sm ${
             isDarkMode 
