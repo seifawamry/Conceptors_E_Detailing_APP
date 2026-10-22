@@ -322,7 +322,17 @@ export default function PresentationMode({
   // =========================================================================
   // TOUCH SWIPE & PINCH HANDLERS (TABLET / IPAD TOUCH OPTIMIZED)
   // =========================================================================
+  const isTouchOnInteractiveControl = (target) => {
+    if (!target || typeof target.closest !== 'function') return false;
+    return Boolean(
+      target.closest('button, a, input, select, textarea, [role="button"], [data-ui-control="true"]')
+    );
+  };
+
   const handleTouchStart = (e) => {
+    if (isTouchOnInteractiveControl(e.target)) {
+      return;
+    }
     isSwipingRef.current = false;
     // 1. Two-Finger Pinch Zoom on iPad/Tablets
     if (e.touches && e.touches.length === 2) {
@@ -350,6 +360,9 @@ export default function PresentationMode({
   };
 
   const handleTouchMove = (e) => {
+    if (isTouchOnInteractiveControl(e.target)) {
+      return;
+    }
     // 1. Pinch Zoom Processing
     if (e.touches && e.touches.length === 2 && pinchStartDistRef.current > 0) {
       const dist = Math.hypot(
@@ -384,6 +397,9 @@ export default function PresentationMode({
   };
 
   const handleTouchEnd = (e) => {
+    if (isTouchOnInteractiveControl(e.target)) {
+      return;
+    }
     // Release pinch
     if (pinchStartDistRef.current > 0) {
       pinchStartDistRef.current = 0;
@@ -525,24 +541,34 @@ export default function PresentationMode({
       }`}
       style={{ touchAction: zoomLevel > 1 ? 'none' : 'auto' }}
     >
-      {/* PERSISTENT FLOATING "← Back to 3D Body Protocol" WHEN TOOLBAR IS HIDDEN */}
-      {onBackToAnatomy && !showToolbars && (
+      {/* PERMANENTLY MOUNTED FLOATING "← Back to 3D Body Protocol" BUTTON (ZERO UNMOUNT DELAY ON TABLET TOUCH) */}
+      {onBackToAnatomy && (
         <div
-          className="absolute top-0 left-0 z-50 p-3 sm:p-4 pointer-events-auto"
+          data-ui-control="true"
+          className="fixed top-0 left-0 z-[70] p-3 sm:p-4 pointer-events-auto"
           style={{
-            paddingTop: 'max(12px, env(safe-area-inset-top, 12px))',
+            paddingTop: 'max(10px, env(safe-area-inset-top, 10px))',
             paddingLeft: 'max(12px, env(safe-area-inset-left, 12px))',
           }}
         >
           <button
+            type="button"
+            data-ui-control="true"
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onBackToAnatomy();
+            }}
             onClick={(e) => {
               e.stopPropagation();
               onBackToAnatomy();
             }}
-            className="min-h-[44px] px-4 py-2.5 rounded-2xl bg-[#0B1120]/95 hover:bg-[#0F172A] text-teal-300 border border-teal-400/60 shadow-[0_10px_25px_rgba(20,184,166,0.35)] backdrop-blur-md transition-all flex items-center gap-2 text-xs sm:text-sm font-black active:scale-95 cursor-pointer"
+            className="min-h-[48px] px-4 sm:px-5 py-2.5 rounded-2xl bg-[#0B1120] hover:bg-slate-900 text-teal-300 border-2 border-teal-400/80 shadow-[0_10px_28px_rgba(20,184,166,0.45)] backdrop-blur-md transition-transform flex items-center gap-2 text-xs sm:text-sm font-black active:scale-95 cursor-pointer select-none"
+            style={{ touchAction: 'manipulation' }}
             title="Return immediately to 3D Anatomical Clinical Protocol Explorer"
           >
-            <span>← Back to 3D Body Protocol</span>
+            <ChevronLeft className="w-5 h-5 text-teal-300 stroke-[3]" />
+            <span>Back to 3D Body Protocol</span>
           </button>
         </div>
       )}
@@ -551,6 +577,7 @@ export default function PresentationMode({
       {/* 1. TOP HEADER TOOLBAR & ACTIVE PROTOCOL PIPELINE                          */}
       {/* ========================================================================= */}
       <div
+        data-ui-control="true"
         className={`absolute top-0 inset-x-0 z-40 transition-all duration-300 pointer-events-auto flex flex-col ${
           showToolbars
             ? 'opacity-100 translate-y-0'
@@ -564,31 +591,34 @@ export default function PresentationMode({
       >
         {/* Main Header Row */}
         <div className="p-3 sm:p-4 flex items-center justify-between gap-2">
-          {/* Left: Exit / Back to 3D Body Protocol & Product Details */}
+          {/* Left: Exit / Back to 3D Body Protocol Spacer & Product Details */}
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {onBackToAnatomy ? (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onBackToAnatomy();
-                }}
-                className="min-h-[44px] px-4 py-2.5 rounded-2xl bg-[#0B1120] hover:bg-slate-900 text-teal-300 border border-teal-400/70 shadow-[0_8px_20px_rgba(20,184,166,0.3)] backdrop-blur-md transition-all flex items-center gap-2 text-xs sm:text-sm font-black active:scale-95 cursor-pointer"
-                title="Return immediately to 3D Anatomical Clinical Protocol Explorer"
-              >
-                <span>← Back to 3D Body Protocol</span>
-              </button>
+              /* Invisible spacer matching the permanently mounted Back to 3D Body button */
+              <div className="min-h-[48px] w-[210px] sm:w-[235px] flex-shrink-0 pointer-events-none" />
             ) : (
               <button
-                onClick={onClose}
-                className={`min-h-[44px] px-3.5 py-2.5 rounded-2xl border backdrop-blur-md transition-all flex items-center gap-2 text-xs font-black active:scale-95 shadow-sm ${
+                type="button"
+                data-ui-control="true"
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  onClose();
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                className={`min-h-[48px] px-4 py-2.5 rounded-2xl border backdrop-blur-md transition-all flex items-center gap-2 text-xs sm:text-sm font-black active:scale-95 shadow-sm cursor-pointer ${
                   isDarkMode 
                     ? 'bg-slate-900/90 hover:bg-slate-800 border-white/15 text-white' 
                     : 'bg-white/95 hover:bg-white border-slate-200/80 text-slate-800'
                 }`}
+                style={{ touchAction: 'manipulation' }}
                 title="Exit Presentation Mode (Esc)"
               >
-                <X className="w-4 h-4 text-slate-400" />
-                <span className="hidden sm:inline">Exit</span>
+                <X className="w-4 h-4 text-red-500 stroke-[2.5]" />
+                <span>Exit</span>
               </button>
             )}
 
@@ -815,6 +845,13 @@ export default function PresentationMode({
 
         {/* Touch-Friendly Side Paddle Arrows (Clean navigation, toolbars stay hidden!) */}
         <button
+          type="button"
+          data-ui-control="true"
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            handlePrevSlideOrProduct();
+          }}
           onClick={(e) => {
             e.stopPropagation();
             handlePrevSlideOrProduct();
@@ -825,16 +862,24 @@ export default function PresentationMode({
               ? `Previous in Protocol: ${prevProduct?.shortName || prevProduct?.name}`
               : 'Previous Slide (Swipe Right / Left Arrow)'
           }
-          className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full border transition-all flex items-center justify-center active:scale-90 shadow-md ${
+          className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-slate-300/80 transition-all flex items-center justify-center active:scale-90 shadow-lg cursor-pointer ${
             currentSlideIndex === 0 && !hasPrevProduct
               ? 'opacity-0 pointer-events-none' 
-              : 'opacity-40 hover:opacity-95 bg-white/90 hover:bg-white text-slate-800'
+              : 'opacity-75 hover:opacity-100 bg-white/95 hover:bg-white text-slate-900'
           }`}
+          style={{ touchAction: 'manipulation' }}
         >
-          <ChevronLeft className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.5]" />
+          <ChevronLeft className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.8]" />
         </button>
 
         <button
+          type="button"
+          data-ui-control="true"
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            handleNextSlideOrProduct();
+          }}
           onClick={(e) => {
             e.stopPropagation();
             handleNextSlideOrProduct();
@@ -845,13 +890,14 @@ export default function PresentationMode({
               ? `Next in Protocol: Step ${currentProductInProtocolIndex + 2} (${nextProduct?.shortName || nextProduct?.name})`
               : 'Next Slide (Swipe Left / Right Arrow)'
           }
-          className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full border transition-all flex items-center justify-center active:scale-90 shadow-md ${
+          className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-slate-300/80 transition-all flex items-center justify-center active:scale-90 shadow-lg cursor-pointer ${
             currentSlideIndex === slides.length - 1 && !hasNextProduct && !isProtocolMode
               ? 'opacity-0 pointer-events-none' 
-              : 'opacity-40 hover:opacity-95 bg-white/90 hover:bg-white text-slate-800'
+              : 'opacity-75 hover:opacity-100 bg-white/95 hover:bg-white text-slate-900'
           }`}
+          style={{ touchAction: 'manipulation' }}
         >
-          <ChevronRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.5]" />
+          <ChevronRight className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.8]" />
         </button>
       </div>
 
@@ -859,6 +905,7 @@ export default function PresentationMode({
       {/* 3. ALWAYS-AVAILABLE FLOATING STEP DOCK (3D SPATIAL THUMB ZONE)           */}
       {/* ========================================================================= */}
       <div 
+        data-ui-control="true"
         className="absolute bottom-3 sm:bottom-4 inset-x-0 z-40 px-2 sm:px-4 flex justify-center pointer-events-none select-none"
         style={{
           paddingBottom: 'max(12px, env(safe-area-inset-bottom, 0px))',
@@ -866,13 +913,27 @@ export default function PresentationMode({
           paddingRight: 'max(8px, env(safe-area-inset-right, 0px))',
         }}
       >
-        <div className={`pointer-events-auto p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl flex items-center justify-between gap-2 max-w-full overflow-x-auto no-scrollbar ${
-          isDarkMode 
-            ? 'ui-3d-dock-dark text-white' 
-            : 'ui-3d-dock text-slate-900'
-        }`}>
+        <div
+          data-ui-control="true"
+          className={`pointer-events-auto p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl flex items-center justify-between gap-2 max-w-full overflow-x-auto no-scrollbar ${
+            isDarkMode 
+              ? 'ui-3d-dock-dark text-white' 
+              : 'ui-3d-dock text-slate-900'
+          }`}
+        >
           {/* 1. LEFT THUMB: PREVIOUS STEP / PREVIOUS SLIDE (3D TACTILE BUTTON) */}
           <button
+            type="button"
+            data-ui-control="true"
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              if (isProtocolMode && hasPrevProduct) {
+                returnToPrevProductInProtocol();
+              } else if (currentSlideIndex > 0) {
+                goToSlide(currentSlideIndex - 1);
+              }
+            }}
             onClick={(e) => {
               e.stopPropagation();
               if (isProtocolMode && hasPrevProduct) {
@@ -882,11 +943,12 @@ export default function PresentationMode({
               }
             }}
             disabled={!hasPrevProduct && currentSlideIndex === 0}
-            className={`min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 text-left flex-shrink-0 ui-3d-btn-secondary ${
+            className={`min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 text-left flex-shrink-0 ui-3d-btn-secondary cursor-pointer ${
               !hasPrevProduct && currentSlideIndex === 0
                 ? 'opacity-30 border-transparent text-slate-400 cursor-not-allowed pointer-events-none'
                 : ''
             }`}
+            style={{ touchAction: 'manipulation' }}
             title={
               isProtocolMode && hasPrevProduct
                 ? `Previous Step: ${prevProduct?.shortName || prevProduct?.name}`
@@ -916,18 +978,25 @@ export default function PresentationMode({
                   const isDone = idx < currentProductInProtocolIndex;
                   return (
                     <button
+                      type="button"
                       key={p.id}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        switchToProtocolProduct(idx, 0);
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
                         switchToProtocolProduct(idx, 0);
                       }}
-                      className={`min-h-[44px] px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                      className={`min-h-[44px] px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                         isCurrentStep
                           ? 'ui-3d-pill-active ring-2 ring-emerald-400'
                           : isDone
                             ? 'bg-emerald-100 text-emerald-950 border border-emerald-200 hover:bg-emerald-200'
                             : 'ui-3d-btn-secondary text-slate-700'
                       }`}
+                      style={{ touchAction: 'manipulation' }}
                       title={`Jump directly to Step ${idx + 1}: ${p.name}`}
                     >
                       <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${
@@ -942,37 +1011,55 @@ export default function PresentationMode({
               </div>
             )}
 
-            {/* Slide Progress Dots (Within Current Product) */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100/70 dark:bg-slate-800/70 rounded-xl border border-slate-200/60 shadow-inner">
-              <span className="text-[10px] font-mono font-bold text-slate-500 mr-1 whitespace-nowrap">
+            {/* Slide Progress Dots (Tablet-friendly larger touch pills) */}
+            <div className="hidden md:flex items-center gap-1 px-2.5 py-1.5 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 shadow-inner">
+              <span className="text-[11px] font-mono font-extrabold text-slate-600 dark:text-slate-300 mr-1 whitespace-nowrap">
                 {currentSlideIndex + 1}/{slides.length}
               </span>
               {slides.map((_, idx) => (
                 <button
+                  type="button"
                   key={idx}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    goToSlide(idx);
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     goToSlide(idx);
                   }}
-                  className={`h-2 transition-all rounded-full ${
-                    idx === currentSlideIndex
-                      ? 'w-4 bg-[#0B431E] ring-1 ring-emerald-400 shadow-sm'
-                      : idx < currentSlideIndex
-                        ? 'w-2 bg-emerald-600'
-                        : 'w-1.5 bg-slate-300 dark:bg-slate-600'
-                  }`}
+                  className="p-1.5 flex items-center justify-center cursor-pointer"
+                  style={{ touchAction: 'manipulation' }}
                   title={getSlideStepLabel(idx, slides.length)}
-                />
+                >
+                  <span
+                    className={`h-2.5 transition-all rounded-full block ${
+                      idx === currentSlideIndex
+                        ? 'w-5 bg-[#0B431E] ring-1 ring-emerald-400 shadow-sm'
+                        : idx < currentSlideIndex
+                          ? 'w-2.5 bg-emerald-600'
+                          : 'w-2 bg-slate-300 dark:bg-slate-600'
+                    }`}
+                  />
+                </button>
               ))}
             </div>
 
             {/* ⚡ 1.5s Omni-Matrix Button (3D Amber Physical Button) */}
             <button
+              type="button"
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setActiveDrawer('matrix');
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveDrawer('matrix');
               }}
-              className="min-h-[48px] px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl ui-3d-btn-amber text-xs font-black flex items-center gap-1.5 whitespace-nowrap"
+              className="min-h-[48px] px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl ui-3d-btn-amber text-xs font-black flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
+              style={{ touchAction: 'manipulation' }}
               title="1.5s Omni-Matrix (Jump to any of 16 products)"
             >
               <Zap className="w-4 h-4 text-slate-950 fill-current flex-shrink-0" />
@@ -981,15 +1068,22 @@ export default function PresentationMode({
 
             {/* Clinical Evidence Drawer Button (3D Tactile Button) */}
             <button
+              type="button"
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setActiveDrawer((prev) => prev === 'references' ? null : 'references');
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveDrawer((prev) => prev === 'references' ? null : 'references');
               }}
-              className={`min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl text-xs font-black flex items-center gap-1.5 whitespace-nowrap ${
+              className={`min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl text-xs font-black flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeDrawer === 'references'
                   ? 'bg-purple-600 text-white border-purple-400 shadow-md ring-2 ring-purple-300'
                   : 'ui-3d-btn-secondary text-[#0B431E]'
               }`}
+              style={{ touchAction: 'manipulation' }}
               title="Published Clinical Studies & Trials"
             >
               <BookOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
@@ -998,37 +1092,86 @@ export default function PresentationMode({
 
             {/* Toggle Full Top Toolbar (Doctor Focus / Tools) */}
             <button
+              type="button"
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setShowToolbars((prev) => !prev);
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setShowToolbars((prev) => !prev);
               }}
-              className={`min-h-[48px] px-3 py-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+              className={`min-h-[48px] px-3 py-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 showToolbars
                   ? 'ui-3d-btn-primary'
                   : 'ui-3d-btn-secondary text-slate-700'
               }`}
+              style={{ touchAction: 'manipulation' }}
               title="Toggle Top Controls (Laser, Spotlight, Zoom, Timer)"
             >
               {showToolbars ? <EyeOff className="w-4 h-4 text-emerald-300" /> : <Eye className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
               <span className="hidden 2xl:inline">{showToolbars ? 'Hide Top Tools' : 'Top Tools'}</span>
             </button>
 
-            {/* Quick Exit Button (Always Reachable in Thumb Zone) */}
+            {/* Quick Exit / Back to 3D Body Button (Always Reachable in Thumb Zone) */}
             <button
+              type="button"
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (onBackToAnatomy) {
+                  onBackToAnatomy();
+                } else {
+                  onClose();
+                }
+              }}
               onClick={(e) => {
                 e.stopPropagation();
-                onClose();
+                if (onBackToAnatomy) {
+                  onBackToAnatomy();
+                } else {
+                  onClose();
+                }
               }}
-              className="min-h-[48px] px-3 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl ui-3d-btn-secondary text-slate-700 hover:text-red-700 text-xs font-black flex items-center gap-1.5 whitespace-nowrap cursor-pointer active:scale-95 shadow-sm"
-              title="Exit Detailing & Return to Portfolio (Esc)"
+              className={`min-h-[48px] px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs font-black flex items-center gap-1.5 whitespace-nowrap cursor-pointer active:scale-95 shadow-sm ${
+                onBackToAnatomy
+                  ? 'bg-[#0B1120] text-teal-300 border-2 border-teal-400/70'
+                  : 'ui-3d-btn-secondary text-slate-700 hover:text-red-700'
+              }`}
+              style={{ touchAction: 'manipulation' }}
+              title={onBackToAnatomy ? 'Return to 3D Body Protocol' : 'Exit Detailing & Return to Portfolio (Esc)'}
             >
-              <X className="w-4 h-4 text-red-600 flex-shrink-0" />
-              <span className="hidden sm:inline">Exit</span>
+              {onBackToAnatomy ? (
+                <>
+                  <ChevronLeft className="w-4 h-4 text-teal-300 stroke-[3] flex-shrink-0" />
+                  <span>3D Body</span>
+                </>
+              ) : (
+                <>
+                  <X className="w-4 h-4 text-red-600 flex-shrink-0" />
+                  <span>Exit</span>
+                </>
+              )}
             </button>
           </div>
 
           {/* 3. RIGHT THUMB: NEXT STEP / NEXT SLIDE / COMPLETE (3D PRIMARY BUTTON) */}
           <button
+            type="button"
+            data-ui-control="true"
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              if (isProtocolMode && hasNextProduct) {
+                advanceToNextProductInProtocol();
+              } else if (currentSlideIndex < slides.length - 1) {
+                goToSlide(currentSlideIndex + 1);
+              } else if (isProtocolMode) {
+                setProtocolToast('Protocol Detail Complete! All protocol therapies reviewed.');
+                setTimeout(() => setProtocolToast(null), 3500);
+              }
+            }}
             onClick={(e) => {
               e.stopPropagation();
               if (isProtocolMode && hasNextProduct) {
@@ -1040,7 +1183,8 @@ export default function PresentationMode({
                 setTimeout(() => setProtocolToast(null), 3500);
               }
             }}
-            className="min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 text-right flex-shrink-0 ui-3d-btn-primary"
+            className="min-h-[48px] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 text-right flex-shrink-0 ui-3d-btn-primary cursor-pointer"
+            style={{ touchAction: 'manipulation' }}
             title={
               isProtocolMode && hasNextProduct
                 ? `Next Step: ${nextProduct?.shortName || nextProduct?.name}`

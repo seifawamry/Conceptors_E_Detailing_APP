@@ -9,7 +9,7 @@ import QuickJumpMatrix from './components/QuickJumpMatrix.jsx';
 import CallLogsModal from './components/CallLogsModal.jsx';
 import PlaylistDrawer from './components/PlaylistDrawer.jsx';
 import ConceptorsLogo from './components/ConceptorsLogo.jsx';
-import { enterFullscreenLandscape } from './utils/screenUtils.js';
+import { enterFullscreenLandscape, exitFullscreen } from './utils/screenUtils.js';
 import { 
   Star, 
   Search, 
@@ -286,6 +286,7 @@ export default function App() {
 
   // Return immediately from e-detailing slide deck back to 3D Body Protocol
   const handleBackToAnatomy = useCallback(() => {
+    exitFullscreen();
     setActivePresentationProduct(null);
     setActiveProtocol(null);
     setOpenedFromAnatomy(false);
@@ -293,7 +294,7 @@ export default function App() {
       if (anatomySectionRef.current) {
         anatomySectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 80);
+    }, 60);
   }, []);
 
   // Unique specialties (extracts from multi-specialty arrays such as Virulys)
@@ -442,6 +443,13 @@ export default function App() {
             initialZoneId={anatomyState.zoneId}
           />
         </div>
+
+        {/* 3.5 FULL PRE-BUILT CLINICAL CALL FLOWS (ALL 8 SEQUENTIAL PROTOCOLS) */}
+        <CallFlows
+          callFlows={catalogData.callFlows}
+          onLaunchFlow={(flow, stepIdx) => handleLaunchFlow(flow, stepIdx, true)}
+          allProductsMap={allProductsMap}
+        />
 
         {/* 4. DASHBOARD FILTERS & SEARCH */}
         <div className="space-y-4 mb-6">
