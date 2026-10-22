@@ -47,10 +47,10 @@ export const ANATOMICAL_ZONES = [
     },
     clinicalMetrics: [
       {
-        value: '50:1 Ratio',
-        label: 'L-Lysine to L-Arginine',
-        sub: 'Blocks FHV-1 without arginine depletion',
-        percent: 96,
+        value: 'Multimodal',
+        label: 'Multimodal Support',
+        sub: 'Antiviral replication block, airway secretolysis & mucosal immune defense',
+        percent: 98,
         color: '#3B82F6',
       },
       {
@@ -559,7 +559,7 @@ const CALL_FLOW_ANATOMY_MAP = {
     preferredSpecies: 'feline',
     organBadge: 'Feline Cranial Sinus, Conjunctiva & Bronchial Tree',
     clinicalMetrics: [
-      { value: '50:1 Ratio', label: 'L-Lysine Dominance', sub: 'Blocks FHV-1 replication safely', percent: 98, color: '#3B82F6' },
+      { value: 'Multimodal', label: 'Multimodal Support', sub: 'Antiviral replication block, airway secretolysis & mucosal immune defense', percent: 98, color: '#3B82F6' },
       { value: 'BID Dosing', label: 'Twice-Daily URI Protocol', sub: 'Sustained 12h ocular-nasal viral block', percent: 100, color: '#14B8A6' },
       { value: '3-Step URI', label: 'Block → Clear → Immunize', sub: 'Resolves sneezing, discharge & congestion', percent: 92, color: '#10B981' },
     ],
