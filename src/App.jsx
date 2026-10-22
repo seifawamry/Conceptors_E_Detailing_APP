@@ -198,7 +198,7 @@ export default function App() {
   };
 
   // Launch a pre-built clinical flow (optionally start directly at any step e.g. Step 2)
-  const handleLaunchFlow = (flow, initialStepIndex = 0) => {
+  const handleLaunchFlow = (flow, initialStepIndex = 0, fromAnatomy = true) => {
     enterFullscreenLandscape();
     const flowProducts = flow.productIds
       .map((id) => allProductsMap[id])
@@ -225,7 +225,7 @@ export default function App() {
         products: flowProducts,
         currentProductIndex: safeIndex,
       };
-      setOpenedFromAnatomy(false);
+      setOpenedFromAnatomy(fromAnatomy);
       setActiveProtocol(protocolObj);
       setCallPlaylist(flowProducts);
       setActivePresentationProduct(flowProducts[safeIndex]);
@@ -430,23 +430,18 @@ export default function App() {
           <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[#0B431E]/5 to-transparent blur-2xl pointer-events-none" />
         </div>
 
-        {/* 2.5 INTERACTIVE 3D ANATOMICAL CLINICAL PROTOCOL EXPLORER (STRICTLY 16 PRODUCTS) */}
+        {/* 3. INTERACTIVE 3D ANATOMICAL CLINICAL PROTOCOL & EMBEDDED CALL FLOWS EXPLORER */}
         <div ref={anatomySectionRef} id="anatomy-explorer-section" className="scroll-mt-24">
           <AnatomyExplorer
             allProductsMap={allProductsMap}
+            callFlows={catalogData.callFlows}
             onSelectProduct={handleSelectProductFromAnatomy}
             onLaunchZoneProtocol={handleLaunchZoneProtocol}
+            onLaunchFlow={(flow, stepIdx) => handleLaunchFlow(flow, stepIdx, true)}
             initialSpecies={anatomyState.species}
             initialZoneId={anatomyState.zoneId}
           />
         </div>
-
-        {/* 3. 1-TAP PRE-BUILT CLINICAL CALL FLOWS */}
-        <CallFlows
-          callFlows={catalogData.callFlows}
-          onLaunchFlow={handleLaunchFlow}
-          allProductsMap={allProductsMap}
-        />
 
         {/* 4. DASHBOARD FILTERS & SEARCH */}
         <div className="space-y-4 mb-6">
