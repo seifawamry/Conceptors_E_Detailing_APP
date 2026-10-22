@@ -254,7 +254,7 @@ export default function App() {
     const protocolObj = {
       id: `anatomy-${zone.id}`,
       title: `3D Anatomy: ${zone.protocolTitle}`,
-      tagline: `${zone.name} (${zone.organLabel})`,
+      tagline: `${zone.name} (${zone.anatomicalStructure || zone.organLabel || ''})`,
       category: zone.name,
       badge: `Zone ${zone.number} • 3D Protocol`,
       accent: '#14B8A6',

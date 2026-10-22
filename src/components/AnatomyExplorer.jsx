@@ -306,6 +306,7 @@ export const ANATOMICAL_ZONES = [
 
 export default function AnatomyExplorer({
   allProductsMap = {},
+  onSelectProduct,
   onSelectProductFromAnatomy,
   onLaunchZoneProtocol,
   initialSpecies = 'feline',
@@ -315,9 +316,10 @@ export default function AnatomyExplorer({
   const [species, setSpecies] = useState(initialSpecies); // 'feline' | 'canine'
   const [activeZoneId, setActiveZoneId] = useState(initialZoneId);
   const [activeSubTab, setActiveSubTab] = useState('all');
-  const [isZoomedToOrgan, setIsZoomedToOrgan] = useState(true);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const stageRef = useRef(null);
+
+  const handleProductSelect = onSelectProduct || onSelectProductFromAnatomy;
 
   const activeZone = useMemo(
     () => ANATOMICAL_ZONES.find((z) => z.id === activeZoneId) || ANATOMICAL_ZONES[0],
@@ -327,7 +329,6 @@ export default function AnatomyExplorer({
   const handleSelectZone = (zoneId) => {
     setActiveZoneId(zoneId);
     setActiveSubTab('all');
-    setIsZoomedToOrgan(true);
     if (onStateChange) {
       onStateChange({ species, zoneId });
     }
@@ -362,8 +363,8 @@ export default function AnatomyExplorer({
     const normX = (clientX - rect.left) / rect.width - 0.5;
     const normY = (clientY - rect.top) / rect.height - 0.5;
     setTilt({
-      x: normY * -10,
-      y: normX * 12,
+      x: normY * -8,
+      y: normX * 10,
     });
   };
 
@@ -371,18 +372,10 @@ export default function AnatomyExplorer({
     setTilt({ x: 0, y: 0 });
   };
 
-  // Compute 3D camera transform when zoomed into an organ vs full-body view
-  const activeCoords = activeZone.coords[species] || activeZone.coords.feline;
+  // Always keep full-body view (no zoom-in when selecting a zone) with subtle 3D parallax tilt
   const cameraTransform = useMemo(() => {
-    if (!isZoomedToOrgan) {
-      return `perspective(1200px) rotateX(${tilt.x.toFixed(2)}deg) rotateY(${tilt.y.toFixed(2)}deg) scale3d(1, 1, 1) translate3d(0px, 0px, 0px)`;
-    }
-    // Pan slightly toward the selected organ's coordinates
-    const panX = (50 - activeCoords.zoomX) * 0.55;
-    const panY = (50 - activeCoords.zoomY) * 0.55;
-    const scale = activeCoords.scale || 1.45;
-    return `perspective(1200px) rotateX(${(tilt.x * 0.6).toFixed(2)}deg) rotateY(${(tilt.y * 0.6).toFixed(2)}deg) scale3d(${scale}, ${scale}, 1) translate3d(${panX.toFixed(1)}%, ${panY.toFixed(1)}%, 20px)`;
-  }, [isZoomedToOrgan, tilt, activeCoords]);
+    return `perspective(1200px) rotateX(${tilt.x.toFixed(2)}deg) rotateY(${tilt.y.toFixed(2)}deg) scale3d(1, 1, 1) translate3d(0px, 0px, 0px)`;
+  }, [tilt]);
 
   const getCompanyBrandStyle = (companyId) => {
     switch (companyId) {
@@ -424,7 +417,7 @@ export default function AnatomyExplorer({
           </div>
         </div>
 
-        {/* Species 3D Model Switcher + Camera Reset */}
+        {/* Species 3D Model Switcher */}
         <div className="flex items-center gap-2 flex-wrap">
           <div className="p-1 rounded-2xl bg-slate-900/90 border border-slate-700/80 flex items-center gap-1 shadow-inner">
             <button
@@ -450,19 +443,6 @@ export default function AnatomyExplorer({
               <span>3D Canine Anatomy</span>
             </button>
           </div>
-
-          <button
-            onClick={() => setIsZoomedToOrgan((prev) => !prev)}
-            className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer ${
-              isZoomedToOrgan
-                ? 'bg-teal-950/80 border-teal-400/50 text-teal-300 hover:bg-teal-900/80'
-                : 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white'
-            }`}
-            title="Toggle 3D Organ Zoom vs Full Body Overview"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>{isZoomedToOrgan ? 'Reset Full Body' : 'Zoom to Organ'}</span>
-          </button>
         </div>
       </div>
 
@@ -1127,8 +1107,8 @@ export default function AnatomyExplorer({
                   <div
                     key={product.id}
                     onClick={() =>
-                      onSelectProductFromAnatomy &&
-                      onSelectProductFromAnatomy(product, activeZone, species)
+                      handleProductSelect &&
+                      handleProductSelect(product, activeZone, species)
                     }
                     className={`group relative rounded-2xl bg-white border transition-all duration-200 p-3.5 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 cursor-pointer hover:shadow-xl hover:-translate-y-0.5 ${
                       meta.highlightBid
