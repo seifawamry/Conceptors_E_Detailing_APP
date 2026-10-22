@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import catalogData from './data/catalog.json';
 import Header from './components/Header.jsx';
 import ProductCard from './components/ProductCard.jsx';
 import CallFlows from './components/CallFlows.jsx';
+import AnatomyExplorer from './components/AnatomyExplorer.jsx';
 import PresentationMode from './components/PresentationMode.jsx';
 import QuickJumpMatrix from './components/QuickJumpMatrix.jsx';
 import CallLogsModal from './components/CallLogsModal.jsx';
@@ -17,7 +18,8 @@ import {
   Layers, 
   Building2,
   Stethoscope,
-  ShieldCheck
+  ShieldCheck,
+  Crosshair
 } from 'lucide-react';
 
 export default function App() {
@@ -70,6 +72,12 @@ export default function App() {
   // Presentation & Playlist
   const [activePresentationProduct, setActivePresentationProduct] = useState(null);
   const [activeProtocol, setActiveProtocol] = useState(null);
+  const [openedFromAnatomy, setOpenedFromAnatomy] = useState(false);
+  const [anatomyState, setAnatomyState] = useState({
+    species: 'feline',
+    zoneId: 'ocular-nasal-respiratory',
+  });
+  const anatomySectionRef = useRef(null);
   const [callPlaylist, setCallPlaylist] = useState([]);
   const [isPlaylistDrawerOpen, setIsPlaylistDrawerOpen] = useState(false);
   const [isQuickJumpOpen, setIsQuickJumpOpen] = useState(false);
@@ -217,11 +225,76 @@ export default function App() {
         products: flowProducts,
         currentProductIndex: safeIndex,
       };
+      setOpenedFromAnatomy(false);
       setActiveProtocol(protocolObj);
       setCallPlaylist(flowProducts);
       setActivePresentationProduct(flowProducts[safeIndex]);
     }
   };
+
+  // Scroll smoothly to 3D Anatomical Explorer
+  const scrollToAnatomy = useCallback(() => {
+    if (anatomySectionRef.current) {
+      anatomySectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
+  // Open a specific product from the 3D Anatomical Protocol Explorer
+  const handleSelectProductFromAnatomy = useCallback((product, zone, species) => {
+    enterFullscreenLandscape();
+    setAnatomyState({
+      species: species || 'feline',
+      zoneId: zone.id,
+    });
+    const zoneProducts = zone.productIds
+      .map((id) => allProductsMap[id])
+      .filter(Boolean);
+    const targetIdx = Math.max(0, zoneProducts.findIndex((p) => p.id === product.id));
+
+    const protocolObj = {
+      id: `anatomy-${zone.id}`,
+      title: `3D Anatomy: ${zone.protocolTitle}`,
+      tagline: `${zone.name} (${zone.organLabel})`,
+      category: zone.name,
+      badge: `Zone ${zone.number} • 3D Protocol`,
+      accent: '#14B8A6',
+      clinicalRationale: zone.clinicalSummary,
+      steps: zoneProducts.map((p, idx) => ({
+        step: idx + 1,
+        role: p.specialty || 'Therapy',
+        productId: p.id,
+        label: p.shortName || p.name,
+      })),
+      productIds: zone.productIds,
+      products: zoneProducts,
+      currentProductIndex: targetIdx,
+    };
+
+    setOpenedFromAnatomy(true);
+    setActiveProtocol(protocolObj);
+    setCallPlaylist(zoneProducts);
+    setActivePresentationProduct(product);
+  }, [allProductsMap]);
+
+  // Launch full zone protocol sequentially from the 3D Anatomical Protocol Explorer
+  const handleLaunchZoneProtocol = useCallback((zone, species) => {
+    const firstProd = zone.productIds.map((id) => allProductsMap[id]).find(Boolean);
+    if (firstProd) {
+      handleSelectProductFromAnatomy(firstProd, zone, species);
+    }
+  }, [allProductsMap, handleSelectProductFromAnatomy]);
+
+  // Return immediately from e-detailing slide deck back to 3D Body Protocol
+  const handleBackToAnatomy = useCallback(() => {
+    setActivePresentationProduct(null);
+    setActiveProtocol(null);
+    setOpenedFromAnatomy(false);
+    setTimeout(() => {
+      if (anatomySectionRef.current) {
+        anatomySectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 80);
+  }, []);
 
   // Unique specialties (extracts from multi-specialty arrays such as Virulys)
   const specialties = useMemo(() => {
@@ -291,6 +364,7 @@ export default function App() {
       <Header
         onOpenLogs={() => setIsCallLogsOpen(true)}
         onOpenPlaylist={() => setIsPlaylistDrawerOpen(true)}
+        onToggleAnatomy={scrollToAnatomy}
         playlistCount={callPlaylist.length}
         allSlides={allSlideUrls}
       />
@@ -313,7 +387,7 @@ export default function App() {
               Evidence-Based Veterinary Care & Rapid Diagnostics
             </h2>
             <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl font-medium">
-              16 clinical products across 4 principal partner portfolios. Equipped with clinic light presentation mode, interactive laser pointer, and 100% offline clinic caching.
+              16 clinical products across 4 principal partner portfolios. Equipped with interactive 3D Anatomical Protocol Explorer, clinic light presentation mode, and 100% offline clinic caching.
             </p>
 
             {/* 1-Tap Call Actions (3D Spatial Tactile Buttons) */}
@@ -324,6 +398,14 @@ export default function App() {
               >
                 <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
                 <span>⭐ 1-Tap Launch Top-Tier Call (10 Products)</span>
+              </button>
+
+              <button
+                onClick={scrollToAnatomy}
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold bg-[#0B1120] hover:bg-slate-900 text-teal-300 border border-teal-400/40 shadow-[0_6px_0_#020617,0_10px_20px_rgba(20,184,166,0.25)] active:translate-y-1 transition-all"
+              >
+                <Crosshair className="w-4 h-4 text-teal-400" />
+                <span>🧬 3D Anatomy Protocol Explorer</span>
               </button>
 
               <button
@@ -346,6 +428,17 @@ export default function App() {
 
           {/* Background Decorative Rings */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[#0B431E]/5 to-transparent blur-2xl pointer-events-none" />
+        </div>
+
+        {/* 2.5 INTERACTIVE 3D ANATOMICAL CLINICAL PROTOCOL EXPLORER (STRICTLY 16 PRODUCTS) */}
+        <div ref={anatomySectionRef} id="anatomy-explorer-section" className="scroll-mt-24">
+          <AnatomyExplorer
+            allProductsMap={allProductsMap}
+            onSelectProduct={handleSelectProductFromAnatomy}
+            onLaunchZoneProtocol={handleLaunchZoneProtocol}
+            initialSpecies={anatomyState.species}
+            initialZoneId={anatomyState.zoneId}
+          />
         </div>
 
         {/* 3. 1-TAP PRE-BUILT CLINICAL CALL FLOWS */}
@@ -515,12 +608,14 @@ export default function App() {
                 product={product}
                 onStartPresentation={(p) => {
                   enterFullscreenLandscape();
+                  setOpenedFromAnatomy(false);
                   setActivePresentationProduct(p);
                 }}
                 isInPlaylist={callPlaylist.some((item) => item.id === product.id)}
                 onTogglePlaylist={togglePlaylist}
                 onSelectRelated={(relatedId) => {
                   enterFullscreenLandscape();
+                  setOpenedFromAnatomy(false);
                   const target = allProductsMap[relatedId];
                   if (target) setActivePresentationProduct(target);
                 }}
@@ -566,7 +661,9 @@ export default function App() {
           onClose={() => {
             setActivePresentationProduct(null);
             setActiveProtocol(null);
+            setOpenedFromAnatomy(false);
           }}
+          onBackToAnatomy={openedFromAnatomy ? handleBackToAnatomy : null}
           onSwitchProduct={(newProd, newProtocolIdx) => {
             setActivePresentationProduct(newProd);
             if (activeProtocol && typeof newProtocolIdx === 'number') {

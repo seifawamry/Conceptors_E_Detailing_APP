@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, CheckCircle2, BarChart2, ListPlus, ShieldCheck } from 'lucide-react';
+import { Wifi, WifiOff, CheckCircle2, BarChart2, ListPlus, ShieldCheck, Crosshair } from 'lucide-react';
 import ConceptorsLogo from './ConceptorsLogo.jsx';
 
 export default function Header({ 
   onOpenLogs, 
   onOpenPlaylist, 
+  onToggleAnatomy,
+  isAnatomyOpen = false,
   playlistCount = 0,
   allSlides = [] 
 }) {
@@ -14,7 +16,7 @@ export default function Header({
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOffline(false);
+    const handleOffline = () => setIsOnline(false);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -115,6 +117,22 @@ export default function Header({
               </>
             )}
           </div>
+
+          {/* 3D Anatomical Protocol Explorer Button */}
+          {onToggleAnatomy && (
+            <button
+              onClick={onToggleAnatomy}
+              className={`min-h-[44px] flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer border ${
+                isAnatomyOpen
+                  ? 'bg-[#0B1120] text-teal-300 border-teal-400 shadow-[0_0_20px_rgba(20,184,166,0.35)]'
+                  : 'bg-[#0B1120] hover:bg-slate-900 text-teal-300 border-teal-500/40 shadow-sm'
+              }`}
+              title="Open Interactive 3D Anatomical Clinical Protocol Explorer"
+            >
+              <Crosshair className="w-4 h-4 text-teal-400 animate-pulse" />
+              <span className="hidden sm:inline">3D Anatomy Protocol</span>
+            </button>
+          )}
 
           {/* Active Call Playlist Button */}
           <button

@@ -33,6 +33,7 @@ export default function PresentationMode({
   activeProtocol = null,
   allCallFlows = [],
   onClose,
+  onBackToAnatomy = null,
   onSwitchProduct,
   onLaunchProtocolFlow,
   onOpenQuickJump,
@@ -524,6 +525,28 @@ export default function PresentationMode({
       }`}
       style={{ touchAction: zoomLevel > 1 ? 'none' : 'auto' }}
     >
+      {/* PERSISTENT FLOATING "← Back to 3D Body Protocol" WHEN TOOLBAR IS HIDDEN */}
+      {onBackToAnatomy && !showToolbars && (
+        <div
+          className="absolute top-0 left-0 z-50 p-3 sm:p-4 pointer-events-auto"
+          style={{
+            paddingTop: 'max(12px, env(safe-area-inset-top, 12px))',
+            paddingLeft: 'max(12px, env(safe-area-inset-left, 12px))',
+          }}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onBackToAnatomy();
+            }}
+            className="min-h-[44px] px-4 py-2.5 rounded-2xl bg-[#0B1120]/95 hover:bg-[#0F172A] text-teal-300 border border-teal-400/60 shadow-[0_10px_25px_rgba(20,184,166,0.35)] backdrop-blur-md transition-all flex items-center gap-2 text-xs sm:text-sm font-black active:scale-95 cursor-pointer"
+            title="Return immediately to 3D Anatomical Clinical Protocol Explorer"
+          >
+            <span>← Back to 3D Body Protocol</span>
+          </button>
+        </div>
+      )}
+
       {/* ========================================================================= */}
       {/* 1. TOP HEADER TOOLBAR & ACTIVE PROTOCOL PIPELINE                          */}
       {/* ========================================================================= */}
@@ -541,20 +564,33 @@ export default function PresentationMode({
       >
         {/* Main Header Row */}
         <div className="p-3 sm:p-4 flex items-center justify-between gap-2">
-          {/* Left: Exit & Product Details */}
+          {/* Left: Exit / Back to 3D Body Protocol & Product Details */}
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <button
-              onClick={onClose}
-              className={`min-h-[44px] px-3.5 py-2.5 rounded-2xl border backdrop-blur-md transition-all flex items-center gap-2 text-xs font-black active:scale-95 shadow-sm ${
-                isDarkMode 
-                  ? 'bg-slate-900/90 hover:bg-slate-800 border-white/15 text-white' 
-                  : 'bg-white/95 hover:bg-white border-slate-200/80 text-slate-800'
-              }`}
-              title="Exit Presentation Mode (Esc)"
-            >
-              <X className="w-4 h-4 text-slate-400" />
-              <span className="hidden sm:inline">Exit</span>
-            </button>
+            {onBackToAnatomy ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onBackToAnatomy();
+                }}
+                className="min-h-[44px] px-4 py-2.5 rounded-2xl bg-[#0B1120] hover:bg-slate-900 text-teal-300 border border-teal-400/70 shadow-[0_8px_20px_rgba(20,184,166,0.3)] backdrop-blur-md transition-all flex items-center gap-2 text-xs sm:text-sm font-black active:scale-95 cursor-pointer"
+                title="Return immediately to 3D Anatomical Clinical Protocol Explorer"
+              >
+                <span>← Back to 3D Body Protocol</span>
+              </button>
+            ) : (
+              <button
+                onClick={onClose}
+                className={`min-h-[44px] px-3.5 py-2.5 rounded-2xl border backdrop-blur-md transition-all flex items-center gap-2 text-xs font-black active:scale-95 shadow-sm ${
+                  isDarkMode 
+                    ? 'bg-slate-900/90 hover:bg-slate-800 border-white/15 text-white' 
+                    : 'bg-white/95 hover:bg-white border-slate-200/80 text-slate-800'
+                }`}
+                title="Exit Presentation Mode (Esc)"
+              >
+                <X className="w-4 h-4 text-slate-400" />
+                <span className="hidden sm:inline">Exit</span>
+              </button>
+            )}
 
             <ConceptorsLogo className="h-8 hidden lg:block" light={isDarkMode} />
 
